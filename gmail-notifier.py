@@ -628,6 +628,35 @@ class EmailListPopup(QDialog):
             webbrowser.open(link)
             self.close()
 
+    def update_emails(self, emails):
+        """Update the email list with new emails."""
+        self.emails = emails
+
+        # Clear all items except the first one (Open Gmail)
+        while self.list_widget.count() > 1:
+            self.list_widget.takeItem(1)
+
+        if self.emails:
+            for email_data in self.emails:
+                sender = email_data.get("sender", "Unknown")
+                subject = email_data.get("subject", "(No Subject)")
+                item_text = f"{sender}\n{subject}"
+                item = QListWidgetItem(item_text)
+                item.setData(Qt.UserRole, email_data.get("link"))
+                item.setData(Qt.UserRole + 1, email_data.get("id"))
+                self.list_widget.addItem(item)
+        else:
+            item = QListWidgetItem("No new emails")
+            item.setFlags(Qt.NoItemFlags)
+            item.setForeground(QColor("#888888"))
+            item.setTextAlignment(Qt.AlignCenter)
+            self.list_widget.addItem(item)
+
+        # Resize based on new content
+        item_count = self.list_widget.count()
+        height = min(max(item_count * 60 + 20, 100), 500)
+        self.resize(320, height)
+
 
 # Main class for the application
 class GmailNotifier:
@@ -643,6 +672,9 @@ class GmailNotifier:
         self.click_timer.setSingleShot(True)
         self.click_timer.setInterval(300)  # 300ms delay
         self.click_timer.timeout.connect(self.on_click_timer)
+
+        # Email list popup reference
+        self.popup = None
 
         # Track notified email IDs to avoid duplicate notifications
         self.notified_email_ids = set()
@@ -798,6 +830,9 @@ class GmailNotifier:
         self.show_popup()
 
     def show_popup(self):
+        # Trigger a check for new emails when opening the popup
+        self.check_now()
+
         # Create and show the popup near the cursor
         gmail_url = self.settings.get("gmail_url", "https://mail.google.com")
         self.popup = EmailListPopup(self.current_emails, gmail_url)
@@ -890,6 +925,10 @@ class GmailNotifier:
 
         # Update tray icon badge
         self.update_tray_icon(len(emails) > 0, self.is_snoozed())
+
+        # Update popup if it's open
+        if hasattr(self, "popup") and self.popup is not None and self.popup.isVisible():
+            self.popup.update_emails(emails)
 
         if not emails:
             return
