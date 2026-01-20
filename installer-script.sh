@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Colores para los mensajes
+# Colors for messages
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 BLUE='\033[0;34m'
@@ -8,22 +8,22 @@ YELLOW='\033[0;33m'
 CYAN='\033[0;36m'
 WHITE='\033[1;37m'
 BOLD='\033[1;37m'
-NC='\033[0m' # Sin color
+NC='\033[0m' # No Color
 CHECK_MARK="${GREEN}✓${NC}"
 CROSS_MARK="${RED}✗${NC}"
 
-# Definir rutas
+# Define paths
 SCRIPT_DIR="$HOME/.local/bin"
 CONFIG_DIR="$HOME/.config/gmail-notifier"
 DESKTOP_FILE="$HOME/.config/autostart/gmail-notifier.desktop"
 SCRIPT_PATH="$SCRIPT_DIR/gmail-notifier"
 VENV_DIR="$CONFIG_DIR/venv"
 
-# Mostrar banner
+# Show banner
 show_banner() {
     cat << EOF
 ╔═════════════════════════════════════════════════════════╗
-║                ⚡ GMAIL NOTIFIER PARA KDE ⚡             ║
+║                ⚡ GMAIL NOTIFIER FOR KDE ⚡             ║
 ║                                                         ║
 ║          _____                _ _                       ║
 ║         / ____|              (_) |                      ║
@@ -37,131 +37,164 @@ show_banner() {
 ║  │ Monitor │  │ Notifier│  │ System  │                  ║
 ║  └─────────┘  └─────────┘  └─────────┘                  ║
 ║                                                         ║
-║  📬 Monitorea tu correo de Google Workspace            ║
-║  🔔 Notificaciones en la bandeja del sistema           ║
-║  🚀 Sin necesidad de tener un cliente de correo abierto ║
-║  🔒 Autenticación directa con contraseña de aplicación  ║
-║  🛠️ Github: https://github.com/panxos                  ║
-║  👨‍💻 Developed by: P4NX0S © 2025 - CHILE               ║
+║  📬 Monitor your Google Workspace email                ║
+║  🔔 System tray notifications                          ║
+║  🚀 No need to keep an email client open               ║
+║  🔒 Secure password storage via system keyring            ║
+║  🛠️ Github: https://github.com/utajum/gmail-notifier      ║
+║  👨‍💻 Maintained & Enhanced by: utajum macedonia            ║
+║     (Forked from P4NX0S © 2025 - CHILE)                  ║
 ║                                                         ║
 ╚═════════════════════════════════════════════════════════╝
 EOF
 }
 
-# Mostrar ayuda
+# Show help
 show_help() {
     cat << EOF
-${CYAN}USO:${NC}
-  $0 [OPCIÓN]
+${CYAN}USAGE:${NC}
+  $0 [OPTION]
 
-${CYAN}DESCRIPCIÓN:${NC}
-  Script de instalación/desinstalación para Gmail Notifier.
-  Monitorea automáticamente tu correo de Google Workspace y muestra notificaciones.
+${CYAN}DESCRIPTION:${NC}
+  Installation/uninstallation script for Gmail Notifier.
+  Automatically monitors your Google Workspace email and displays notifications.
 
-${CYAN}OPCIONES:${NC}
-  Sin argumentos     Instala Gmail Notifier en el sistema
-  -h, --help         Muestra este mensaje de ayuda
-  -r, --remove       Desinstala Gmail Notifier del sistema
-  -u, --uninstall    Alias para --remove
+${CYAN}OPTIONS:${NC}
+  No arguments      Installs Gmail Notifier on the system
+  -h, --help         Shows this help message
+  -r, --remove       Uninstalls Gmail Notifier from the system
+  -u, --uninstall    Alias for --remove
 
-${CYAN}EJEMPLOS:${NC}
-  $0                 Instala Gmail Notifier
-  $0 --help          Muestra este mensaje de ayuda
-  $0 --remove        Desinstala Gmail Notifier
+${CYAN}EXAMPLES:${NC}
+  $0                 Installs Gmail Notifier
+  $0 --help          Shows this help message
+  $0 --remove        Uninstalls Gmail Notifier
 
-${CYAN}NOTAS:${NC}
-  - Se usa un entorno virtual de Python para evitar conflictos con el sistema
-  - Necesitas una contraseña de aplicación para tu cuenta de Google
-  - Puedes encontrar el ícono de la aplicación en la bandeja del sistema
+${CYAN}NOTES:${NC}
+  - A Python virtual environment is used to avoid conflicts with the system
+  - You need an app password for your Google account
+  - You can find the application icon in the system tray
 EOF
 }
 
-# Función de desinstalación
+# Uninstall function
 uninstall() {
-    echo -e "${YELLOW}===== Desinstalando Gmail Notifier =====${NC}"
+    echo -e "${YELLOW}===== Uninstalling Gmail Notifier =====${NC}"
     
-    # Comprobar si está en ejecución y terminarlo
+    # Check if it is running and kill it
     if pgrep -f "gmail-notifier" > /dev/null; then
-        echo -e "${BLUE}Deteniendo el proceso Gmail Notifier...${NC}"
+        echo -e "${BLUE}Stopping Gmail Notifier process...${NC}"
         pkill -f "gmail-notifier"
     fi
     
-    # Eliminar archivos y directorios
-    echo -e "${BLUE}Eliminando archivos...${NC}"
+    # Remove files and directories
+    echo -e "${BLUE}Removing files...${NC}"
     
-    # Eliminar scripts
+    # Remove scripts
     if [ -f "$SCRIPT_PATH" ]; then
         rm "$SCRIPT_PATH"
-        echo -e "  ${CHECK_MARK} Script wrapper eliminado"
+        echo -e "  ${CHECK_MARK} Wrapper script removed"
     else
-        echo -e "  ${CROSS_MARK} Script wrapper no encontrado"
+        echo -e "  ${CROSS_MARK} Wrapper script not found"
     fi
     
     if [ -f "$CONFIG_DIR/gmail-notifier.py" ]; then
         rm "$CONFIG_DIR/gmail-notifier.py"
-        echo -e "  ${CHECK_MARK} Script principal eliminado"
+        echo -e "  ${CHECK_MARK} Main script removed"
     else
-        echo -e "  ${CROSS_MARK} Script principal no encontrado"
+        echo -e "  ${CROSS_MARK} Main script not found"
     fi
     
-    # Eliminar archivo desktop
+    # Remove desktop file
     if [ -f "$DESKTOP_FILE" ]; then
         rm "$DESKTOP_FILE"
-        echo -e "  ${CHECK_MARK} Archivo de autoarranque eliminado"
+        echo -e "  ${CHECK_MARK} Autostart file removed"
     else
-        echo -e "  ${CROSS_MARK} Archivo de autoarranque no encontrado"
+        echo -e "  ${CROSS_MARK} Autostart file not found"
     fi
     
-    # Eliminar directorio de configuración
+    # Remove start menu desktop file
+    if [ -f "$HOME/.local/share/applications/gmail-notifier.desktop" ]; then
+        rm "$HOME/.local/share/applications/gmail-notifier.desktop"
+        echo -e "  ${CHECK_MARK} Start menu file removed"
+    else
+        echo -e "  ${CROSS_MARK} Start menu file not found"
+    fi
+    
+    # Remove configuration directory
     if [ -d "$CONFIG_DIR" ]; then
-        echo -e "${YELLOW}¿Deseas eliminar todos los datos de configuración incluyendo tus credenciales? (s/n)${NC}"
+        echo -e "${YELLOW}Do you want to delete all configuration data including your credentials? (y/n)${NC}"
         read -r DELETE_CONFIG
         
-        if [[ "$DELETE_CONFIG" =~ ^[Ss]$ ]]; then
+        if [[ "$DELETE_CONFIG" =~ ^[Yy]$ ]]; then
             rm -rf "$CONFIG_DIR"
-            echo -e "  ${CHECK_MARK} Directorio de configuración eliminado"
+            echo -e "  ${CHECK_MARK} Configuration directory removed"
         else
-            echo -e "  ${CHECK_MARK} Directorio de configuración conservado en $CONFIG_DIR"
+            echo -e "  ${CHECK_MARK} Configuration directory kept at $CONFIG_DIR"
             
-            # Eliminar solo el entorno virtual
+            # Remove only the virtual environment
             if [ -d "$VENV_DIR" ]; then
                 rm -rf "$VENV_DIR"
-                echo -e "  ${CHECK_MARK} Entorno virtual eliminado"
+                echo -e "  ${CHECK_MARK} Virtual environment removed"
             else
-                echo -e "  ${CROSS_MARK} Entorno virtual no encontrado"
+                echo -e "  ${CROSS_MARK} Virtual environment not found"
             fi
         fi
     else
-        echo -e "  ${CROSS_MARK} Directorio de configuración no encontrado"
+        echo -e "  ${CROSS_MARK} Configuration directory not found"
     fi
     
-    echo -e "${GREEN}Desinstalación completada. Gmail Notifier ha sido eliminado del sistema.${NC}"
+    echo -e "${GREEN}Uninstallation completed. Gmail Notifier has been removed from the system.${NC}"
     
-    # Mostrar el banner al finalizar
+    # Show banner at the end
     echo
     show_banner
     
     exit 0
 }
 
-# Función de instalación
+# Installation function
 install() {
-    # Verificar dependencias del sistema
-    echo -e "${BLUE}Verificando dependencias del sistema...${NC}"
+    # Stop any running instances of Gmail Notifier
+    if pgrep -f "gmail-notifier" > /dev/null; then
+        echo -e "${BLUE}Stopping any running instances of Gmail Notifier...${NC}"
+        pkill -f "gmail-notifier"
+        sleep 1 # Give some time for the process to terminate
+    else
+        echo -e "${BLUE}No running instances of Gmail Notifier found.${NC}"
+    fi
+
+    # Check system dependencies
+    echo -e "${BLUE}Checking system dependencies...${NC}"
     echo
 
-    DEPS=("python" "python-virtualenv" "python-pyqt5")
+    # Detect package manager
+    if command -v pacman &> /dev/null; then
+        PKG_MANAGER="pacman"
+        DEPS=("python" "python-virtualenv" "python-pyqt5")
+        CHECK_CMD="pacman -Q"
+        INSTALL_CMD="sudo pacman -S --needed"
+    elif command -v apt-get &> /dev/null; then
+        PKG_MANAGER="apt"
+        DEPS=("python3" "python3-venv" "python3-pyqt5" "python3-dbus")
+        CHECK_CMD="dpkg -l"
+        INSTALL_CMD="sudo apt-get install -y"
+    else
+        echo -e "${RED}Unsupported package manager. Please install dependencies manually.${NC}"
+        exit 1
+    fi
+
     MISSING=()
     
-    # Cabecera de la tabla
-    printf "  %-20s %-10s\n" "Dependencia" "Estado"
+    # Table header
+    printf "  %-20s %-10s\n" "Dependency" "Status"
     printf "  %-20s %-10s\n" "------------" "------"
 
     for dep in "${DEPS[@]}"; do
-        if pacman -Q "$dep" &> /dev/null; then
-            printf "  %-20s ${CHECK_MARK} %s\n" "$dep" "Instalado"
+        if $CHECK_CMD "$dep" &> /dev/null; then
+            printf "  %-20s ${CHECK_MARK} %s\n" "$dep" "Installed"
         else
-            printf "  %-20s ${CROSS_MARK} %s\n" "$dep" "No encontrado"
+            printf "  %-20s ${CROSS_MARK} %s\n" "$dep" "Not found"
             MISSING+=("$dep")
         fi
     done
@@ -169,70 +202,70 @@ install() {
     echo
 
     if [ ${#MISSING[@]} -ne 0 ]; then
-        echo -e "${RED}Se requiere instalar las siguientes dependencias:${NC}"
+        echo -e "${RED}The following dependencies are required:${NC}"
         for dep in "${MISSING[@]}"; do
             echo -e "  - $dep"
         done
         
-        echo -e "${BLUE}¿Deseas instalar estas dependencias ahora? (s/n)${NC}"
+        echo -e "${BLUE}Do you want to install these dependencies now? (y/n)${NC}"
         read -r INSTALL_DEPS
         
-        if [[ "$INSTALL_DEPS" =~ ^[Ss]$ ]]; then
-            echo -e "${BLUE}Instalando dependencias...${NC}"
-            sudo pacman -S --needed "${MISSING[@]}"
+        if [[ "$INSTALL_DEPS" =~ ^[Yy]$ ]]; then
+            echo -e "${BLUE}Installing dependencies...${NC}"
+            $INSTALL_CMD "${MISSING[@]}"
             if [ $? -ne 0 ]; then
-                echo -e "${RED}Error al instalar dependencias. Abortando.${NC}"
+                echo -e "${RED}Error installing dependencies. Aborting.${NC}"
                 exit 1
             fi
-            echo -e "${GREEN}Dependencias instaladas correctamente.${NC}"
+            echo -e "${GREEN}Dependencies installed successfully.${NC}"
         else
-            echo -e "${RED}Las dependencias son necesarias para continuar. Abortando.${NC}"
+            echo -e "${RED}Dependencies are required to continue. Aborting.${NC}"
             exit 1
         fi
     else
-        echo -e "${GREEN}Todas las dependencias están instaladas.${NC}"
+        echo -e "${GREEN}All dependencies are installed.${NC}"
     fi
 
-    # Crear directorios de instalación
-    echo -e "${BLUE}Creando directorios de instalación...${NC}"
+    # Create installation directories
+    echo -e "${BLUE}Creating installation directories...${NC}"
     mkdir -p "$SCRIPT_DIR"
     mkdir -p "$CONFIG_DIR"
     
-    # Copiar el script principal al directorio de configuración
-    echo -e "${BLUE}Copiando script principal...${NC}"
+    # Copy the main script to the configuration directory
+    echo -e "${BLUE}Copying main script...${NC}"
     cp gmail-notifier.py "$CONFIG_DIR/gmail-notifier.py"
     if [ $? -eq 0 ]; then
-        echo -e "  ${CHECK_MARK} Script principal copiado a $CONFIG_DIR/gmail-notifier.py"
+        echo -e "  ${CHECK_MARK} Main script copied to $CONFIG_DIR/gmail-notifier.py"
     else
-        echo -e "  ${CROSS_MARK} Error al copiar el script principal"
-        echo -e "${RED}Asegúrate de que el archivo gmail-notifier.py existe en el directorio actual.${NC}"
+        echo -e "  ${CROSS_MARK} Error copying the main script"
+        echo -e "${RED}Make sure the gmail-notifier.py file exists in the current directory.${NC}"
         exit 1
     fi
     
-    # Crear un entorno virtual
-    echo -e "${BLUE}Creando entorno virtual para dependencias de Python...${NC}"
+    # Create a virtual environment
+    echo -e "${BLUE}Creating virtual environment for Python dependencies...${NC}"
     python -m venv "$VENV_DIR"
     if [ $? -eq 0 ]; then
-        echo -e "  ${CHECK_MARK} Entorno virtual creado en $VENV_DIR"
+        echo -e "  ${CHECK_MARK} Virtual environment created in $VENV_DIR"
     else
-        echo -e "  ${CROSS_MARK} Error al crear el entorno virtual"
-        echo -e "${RED}Verifica que python-virtualenv está instalado correctamente.${NC}"
+        echo -e "  ${CROSS_MARK} Error creating the virtual environment"
+        echo -e "${RED}Verify that python-virtualenv is installed correctly.${NC}"
         exit 1
     fi
     
-    # Instalar dependencias en el entorno virtual
-    echo -e "${BLUE}Instalando dependencias en el entorno virtual...${NC}"
+    # Install dependencies in the virtual environment
+    echo -e "${BLUE}Installing dependencies in the virtual environment...${NC}"
     "$VENV_DIR/bin/pip" install --upgrade pip
-    "$VENV_DIR/bin/pip" install PyQt5
+    "$VENV_DIR/bin/pip" install PyQt5 keyring
     if [ $? -eq 0 ]; then
-        echo -e "  ${CHECK_MARK} Dependencias instaladas correctamente"
+        echo -e "  ${CHECK_MARK} Dependencies installed successfully"
     else
-        echo -e "  ${CROSS_MARK} Error al instalar dependencias en el entorno virtual"
+        echo -e "  ${CROSS_MARK} Error installing dependencies in the virtual environment"
         exit 1
     fi
     
-    # Crear wrapper script
-    echo -e "${BLUE}Creando script de inicio...${NC}"
+    # Create wrapper script
+    echo -e "${BLUE}Creating startup script...${NC}"
     cat > "$SCRIPT_PATH" << EOF
 #!/bin/bash
 source "$VENV_DIR/bin/activate"
@@ -241,22 +274,22 @@ EOF
     
     chmod +x "$SCRIPT_PATH"
     if [ $? -eq 0 ]; then
-        echo -e "  ${CHECK_MARK} Script wrapper creado en $SCRIPT_PATH"
+        echo -e "  ${CHECK_MARK} Wrapper script created at $SCRIPT_PATH"
     else
-        echo -e "  ${CROSS_MARK} Error al crear el script wrapper"
+        echo -e "  ${CROSS_MARK} Error creating the wrapper script"
         exit 1
     fi
 
-    # Crear archivo .desktop para el inicio automático
-    echo -e "${BLUE}Creando archivo .desktop para autoarranque...${NC}"
+    # Create .desktop file for autostart
+    echo -e "${BLUE}Creating .desktop file for autostart...${NC}"
     mkdir -p "$HOME/.config/autostart"
     
     cat > "$DESKTOP_FILE" << EOF
 [Desktop Entry]
 Name=Gmail Notifier
-Comment=Notificador de Gmail para KDE
+Comment=Gmail Notifier for KDE
 Exec=$SCRIPT_PATH
-Icon=gmail
+Icon=internet-mail
 Terminal=false
 Type=Application
 Categories=Network;Email;
@@ -265,57 +298,80 @@ X-GNOME-Autostart-enabled=true
 EOF
 
     if [ $? -eq 0 ]; then
-        echo -e "  ${CHECK_MARK} Archivo .desktop creado en $DESKTOP_FILE"
+        echo -e "  ${CHECK_MARK} .desktop file created at $DESKTOP_FILE"
     else
-        echo -e "  ${CROSS_MARK} Error al crear el archivo .desktop"
+        echo -e "  ${CROSS_MARK} Error creating the .desktop file"
         exit 1
     fi
 
-    echo -e "${GREEN}¡Instalación completada correctamente!${NC}"
+    # Create .desktop file for start menu
+    echo -e "${BLUE}Creating .desktop file for start menu...${NC}"
+    mkdir -p "$HOME/.local/share/applications"
+    
+    cat > "$HOME/.local/share/applications/gmail-notifier.desktop" << EOF
+[Desktop Entry]
+Name=Gmail Notifier
+Comment=Gmail Notifier for KDE
+Exec=$SCRIPT_PATH
+Icon=internet-mail
+Terminal=false
+Type=Application
+Categories=Network;Email;
+StartupNotify=true
+EOF
+
+    if [ $? -eq 0 ]; then
+        echo -e "  ${CHECK_MARK} .desktop file for start menu created"
+    else
+        echo -e "  ${CROSS_MARK} Error creating the .desktop file for start menu"
+        exit 1
+    fi
+
+    echo -e "${GREEN}Installation completed successfully!${NC}"
     echo
     
-    # Información sobre contraseñas de aplicación
+    # Information about app passwords
     cat << EOF
 ${YELLOW}===========================================================${NC}
-  ${BOLD}IMPORTANTE: Sobre las contraseñas de aplicación${NC}
+  ${BOLD}IMPORTANT: About App Passwords${NC}
   
-  Gmail Notifier necesita una "Contraseña de aplicación" para funcionar:
+  Gmail Notifier needs an "App Password" to work:
   
-  1. Ve a tu cuenta de Google > Seguridad
-  2. Activa la "Verificación en dos pasos" si no la tienes
-  3. Busca "Contraseñas de aplicaciones"
-  4. Crea una nueva contraseña para "Correo" > "Otra"
-     (nombrándola "Gmail Notifier")
+  1. Go to your Google Account > Security
+  2. Enable "2-Step Verification" if you haven't already
+  3. Find "App passwords"
+  4. Create a new password for "Mail" > "Other"
+     (naming it "Gmail Notifier")
   
-  Esta contraseña específica te permitirá conectarte de forma
-  segura sin utilizar tu contraseña principal de Google.
+  This specific password will allow you to connect securely
+  without using your main Google password.
 ${YELLOW}===========================================================${NC}
 EOF
 
-    echo -e "${BLUE}¿Deseas iniciar Gmail Notifier ahora? (s/n)${NC}"
+    echo -e "${BLUE}Do you want to start Gmail Notifier now? (y/n)${NC}"
     read -r START_NOW
 
-    if [[ "$START_NOW" =~ ^[Ss]$ ]]; then
-        echo -e "${BLUE}Iniciando Gmail Notifier...${NC}"
+    if [[ "$START_NOW" =~ ^[Yy]$ ]]; then
+        echo -e "${BLUE}Starting Gmail Notifier...${NC}"
         nohup "$SCRIPT_PATH" >/dev/null 2>&1 &
         if [ $? -eq 0 ]; then
-            echo -e "${GREEN}Gmail Notifier está ejecutándose en la bandeja del sistema.${NC}"
-            echo -e "${BLUE}Se abrirá una ventana para configurar tu cuenta.${NC}"
+            echo -e "${GREEN}Gmail Notifier is running in the system tray.${NC}"
+            echo -e "${BLUE}A window will open to configure your account.${NC}"
         else
-            echo -e "${RED}Error al iniciar Gmail Notifier.${NC}"
-            echo -e "${YELLOW}Intenta ejecutarlo manualmente con el comando 'gmail-notifier'${NC}"
+            echo -e "${RED}Error starting Gmail Notifier.${NC}"
+            echo -e "${YELLOW}Try running it manually with the command 'gmail-notifier'${NC}"
         fi
     else
-        echo -e "${BLUE}Puedes iniciar Gmail Notifier más tarde ejecutando:${NC}"
+        echo -e "${BLUE}You can start Gmail Notifier later by running:${NC}"
         echo -e "  ${GREEN}gmail-notifier${NC}"
     fi
     
-    # Mostrar el banner al finalizar
+    # Show banner at the end
     echo
     show_banner
 }
 
-# Comprobar los argumentos
+# Check arguments
 case "$1" in
     -h|--help)
         show_banner

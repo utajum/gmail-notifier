@@ -1,187 +1,247 @@
-# Gmail Notifier para KDE
+# Gmail Notifier for KDE
 
 <div align="center">
-  <img src="https://avatars.githubusercontent.com/u/83629496?v=4" alt="P4NX0S Logo" width="120px" style="border-radius: 10px;"/>
+  <img src="https://avatars.githubusercontent.com/u/83629496?v=4" alt="Gmail Notifier Logo" width="120px" style="border-radius: 10px;"/>
   <br><br>
   <p>
     <img src="https://img.shields.io/badge/KDE-1D99F3?style=for-the-badge&logo=kde&logoColor=white" alt="KDE"/>
+    <img src="https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" alt="Ubuntu"/>
     <img src="https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white" alt="Arch Linux"/>
     <img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Gmail"/>
     <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
   </p>
 </div>
 
-## 📋 Descripción
+## 📋 Description
 
-**Gmail Notifier** es una herramienta liviana para monitorear cuentas de correo de Google Workspace sin necesidad de tener un cliente de correo abierto. Funciona en segundo plano para mostrar notificaciones en la bandeja del sistema de KDE cuando llegan nuevos correos.
+**Gmail Notifier** is a lightweight tool for monitoring Google Workspace email accounts without needing to have an email client open. It runs in the background to show notifications in the KDE system tray when new emails arrive.
 
 <div align="center">
-  <p style="font-style: italic;">Mantente al día con tus correos importantes sin interrumpir tu flujo de trabajo.</p>
+  <p style="font-style: italic;">Stay up-to-date with your important emails without interrupting your workflow.</p>
 </div>
 
-## ✨ Características principales
+## ✨ Key Features
 
-- 🔔 **Notificaciones nativas** en la bandeja del sistema de KDE
-- 🚀 **Ligero y eficiente**: usa mínimos recursos del sistema
-- 🔐 **Autenticación segura** mediante contraseñas de aplicación
-- 🔄 **Verificación periódica** de nuevos correos
-- 📱 **Acceso rápido** a Gmail con un solo clic
-- 🔧 **Integración perfecta** con el entorno KDE
-- 🔒 **Seguro**: almacena las contraseñas de forma encriptada
+- 🔔 **Dual notification system**: both tray icon popups and system notifications (via `notify-send`)
+- 🚀 **Lightweight and efficient**: uses minimal system resources
+- 🔐 **Secure authentication** using app passwords
+- 🔑 **Secure password storage**: uses system keyring instead of file-based encryption
+- 🔄 **Periodic checking** for new emails
+- 📱 **Quick access** to Gmail with a double-click
+- 📋 **Recent Email List**: Single-click to see a themed popup list of the latest emails
+- 🔗 **Direct Email Linking**: Click any email in the list to open it directly in your browser
+- 🔧 **Seamless integration** with KDE and other desktop environments
+- 🧪 **Test notification button**: verify notifications work on your system from the config dialog
+- 📋 **Start menu integration**: launcher icon in your applications menu
+- 🐧 **Multi-distro support**: works on Ubuntu/Debian and Arch Linux
 
-## 🖥️ Capturas de pantalla
+## 🖥️ Screenshots
 
 <div align="center">
   <table>
     <tr>
-      <td align="center"><strong>Notificación en la bandeja del sistema</strong></td>
-      <td align="center"><strong>Configuración de la cuenta</strong></td>
+      <td align="center"><strong>Notification in the system tray</strong></td>
+      <td align="center"><strong>Account configuration</strong></td>
     </tr>
     <tr>
-      <td><img src="screenshots/notification.png" alt="Notificación" width="400px"/></td>
-      <td><img src="screenshots/config.png" alt="Configuración" width="400px"/></td>
+      <td><img src="screenshots/notification.png?other=true" alt="Notifications" width="400px"/></td>
+      <td><img src="screenshots/config.png?other=true" alt="Configuration" width="400px"/></td>
     </tr>
+    <tr>
+      <td align="center"><strong>Recent Emails Popup (Dark Theme)</strong></td>
+      <td align="center"><strong>System Tray Badge (Unread)</strong></td>
+    </tr>
+    <tr>
+      <td><img src="screenshots/unread-emails.png?other=true" alt="Unread Emails" width="400px"/></td>
+      <td><img src="screenshots/systray.png?other=true" alt="System Tray" width="400px"/></td>
+    </tr>
+    <tr>
+      <td align="center"><strong>Context Menu</strong></td>
+      <td align="center"><strong>Snooze Badge (Z)</strong></td>
+    </tr>
+    <tr>
+      <td><img src="screenshots/right-click.png?other=true" alt="Right Click" width="400px"/></td>
+      <td><img src="screenshots/snooze.png?other=true" alt="Snooze Badge" width="400px"/></td>
+    </tr>
+
   </table>
 </div>
 
-## 🔧 Requisitos
+## 🔧 Requirements
 
-- **Arch Linux** (o distribución basada en Arch)
-- **KDE Plasma** 5.x o superior
-- **Python** 3.6 o superior
-- **pip** y **virtualenv**
+- **Linux**: Ubuntu/Debian or Arch Linux (or derivatives)
+- **KDE Plasma** 5.x or higher (other desktop environments may work)
+- **Python** 3.6 or higher
+- **pip** and **virtualenv**
 - **PyQt5**
-- Cuenta de **Google Workspace** o **Gmail**
-- **Verificación en dos pasos** habilitada en tu cuenta de Google
+- **Google Workspace** or **Gmail** account
+- **Two-step verification** enabled in your Google account
 
-## 📦 Instalación
+## 📦 Installation
 
-### 1. Clonar el repositorio
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/panxos/gmail-notifier.git
+git clone https://github.com/utajum/gmail-notifier.git
 cd gmail-notifier
 ```
 
-### 2. Ejecutar el instalador
+### 2. Run the installer
 
 ```bash
 chmod +x installer-script.sh
 ./installer-script.sh
 ```
 
-El instalador:
-1. Verificará e instalará las dependencias necesarias
-2. Creará un entorno virtual para las bibliotecas Python requeridas
-3. Configurará el inicio automático con tu sesión de KDE
-4. Instalará el script y los archivos de configuración
+The installer will:
+1. Check and install the necessary dependencies
+2. Create a virtual environment for the required Python libraries
+3. Configure automatic startup with your KDE session
+4. Install the script and configuration files
 
-### 3. Crear una contraseña de aplicación para Gmail
+### 3. Create an app password for Gmail
 
-Para usar Gmail Notifier, necesitas crear una contraseña de aplicación específica:
+To use Gmail Notifier, you need to create a specific app password:
 
-1. Ve a la [configuración de seguridad de tu cuenta de Google](https://myaccount.google.com/security)
-2. Asegúrate de tener activada la "Verificación en dos pasos" ([ver instrucciones](https://support.google.com/mail/answer/185833?hl=es-419))
-3. Busca "Contraseñas de aplicaciones" y haz clic en ella
-4. Selecciona "Correo" como aplicación y "Otra (nombre personalizado)" como dispositivo
-5. Escribe "Gmail Notifier" como nombre y haz clic en "Generar"
-6. Google mostrará una contraseña de 16 caracteres - cópiala (la necesitarás para configurar Gmail Notifier)
+1. Go to your [Google account security settings](https://myaccount.google.com/security)
+2. Make sure you have "Two-step verification" enabled ([see instructions](https://support.google.com/mail/answer/185833?hl=en))
+3. Look for "App passwords" and click on it
+4. Select "Mail" as the app and "Other (custom name)" as the device
+5. Type "Gmail Notifier" as the name and click "Generate"
+6. Google will show a 16-character password - copy it (you will need it to configure Gmail Notifier)
 
 <div align="center">
-  <img src="screenshots/app-password.png" alt="Contraseña de aplicación" width="500px"/>
+  <img src="screenshots/app-password.png" alt="App password" width="500px"/>
 </div>
 
-### 4. Configurar Gmail Notifier
+### 4. Configure Gmail Notifier
 
-Al iniciar Gmail Notifier por primera vez, se abrirá automáticamente la ventana de configuración:
+When you start Gmail Notifier for the first time, the configuration window will open automatically:
 
-1. Introduce tu dirección de correo electrónico de Gmail
-2. Pega la contraseña de aplicación que generaste anteriormente
-3. Ajusta el intervalo de comprobación si lo deseas (por defecto: 5 minutos)
-4. Haz clic en "Probar conexión" para verificar que todo funciona correctamente
-5. Guarda la configuración
+1. Enter your Gmail email address
+2. Paste the app password you generated earlier
+3. Adjust the check interval if you wish (default: 5 minutes)
+4. Click "Test Connection" to verify that everything is working correctly
+5. Click "Test Notification" to verify notifications display properly on your system
+6. Save the configuration
 
-Gmail Notifier comenzará a funcionar inmediatamente y aparecerá un icono en la bandeja del sistema.
+Gmail Notifier will start working immediately and an icon will appear in the system tray.
 
-## 🚀 Uso
+## 🚀 Usage
 
-- **Clic izquierdo** en el icono: Abre Gmail en tu navegador predeterminado
-- **Clic derecho** en el icono: Muestra un menú con opciones
-  - **Abrir Gmail**: Abre Gmail en tu navegador
-  - **Verificar ahora**: Fuerza una verificación inmediata de nuevos correos
-  - **Configuración**: Abre el diálogo de configuración
-  - **Salir**: Cierra la aplicación
+- **Left-click** on the icon: Opens a themed popup list of received emails with direct links
+- **Double-click** on the icon: Opens Gmail Inbox in your default browser
+- **Right-click** on the icon: Shows a menu with options
+  - **Open Gmail**: Opens Gmail in your browser
+  - **Check now**: Forces an immediate check for new emails
+  - **Settings**: Opens the configuration dialog
+  - **Exit**: Closes the application
 
-## ⚙️ Configuración personalizada
+## ⚙️ Custom configuration
 
-Puedes reconfigurar Gmail Notifier en cualquier momento haciendo clic derecho en el icono de la bandeja del sistema y seleccionando "Configuración".
+You can reconfigure Gmail Notifier at any time by right-clicking the system tray icon and selecting "Settings".
 
-Desde el diálogo de configuración puedes:
-- Cambiar la cuenta de Gmail
-- Actualizar la contraseña de aplicación
-- Modificar el intervalo de verificación
-- Activar/desactivar el inicio automático
+From the configuration dialog you can:
+- Change the Gmail account
+- Update the app password
+- Modify the check interval
+- Enable/disable automatic startup
+- Test notifications to verify they work on your system
 
-## 🗑️ Desinstalación
+## 🗑️ Uninstallation
 
-Si deseas desinstalar Gmail Notifier, ejecuta:
+If you want to uninstall Gmail Notifier, run:
 
 ```bash
 ./installer-script.sh --remove
 ```
 
-Esto eliminará todos los archivos y configuraciones relacionados con Gmail Notifier.
+This will remove all files and settings related to Gmail Notifier.
 
-## 🔍 Solución de problemas
+## 🔍 Troubleshooting
 
-### No recibo notificaciones de nuevos correos
-- Verifica que la conexión se ha establecido correctamente en la configuración
-- Asegúrate de que la contraseña de aplicación es correcta
-- Comprueba que no tienes filtros en Gmail que marquen automáticamente los correos como leídos
+### I'm not receiving notifications for new emails
+- Verify that the connection has been established correctly in the settings
+- Make sure the app password is correct
+- Check that you don't have filters in Gmail that automatically mark emails as read
 
-### Error de autenticación
-- Asegúrate de estar usando una contraseña de aplicación, no tu contraseña principal de Google
-- Verifica que has habilitado correctamente la verificación en dos pasos
-- Genera una nueva contraseña de aplicación e intenta nuevamente
+### Authentication error
+- Make sure you are using an app password, not your main Google password
+- Verify that you have correctly enabled two-step verification
+- Generate a new app password and try again
 
-### El icono no aparece en la bandeja del sistema
-- Verifica que tu panel de KDE tenga habilitado el applet de bandeja del sistema
-- Ejecuta `gmail-notifier` desde la terminal para ver posibles errores
+### The icon does not appear in the system tray
+- Verify that your KDE panel has the system tray applet enabled
+- Run `gmail-notifier` from the terminal to see possible errors
 
-### Error "externally-managed-environment"
-- El instalador crea un entorno virtual para evitar este problema
-- Si persiste, elimina el entorno y vuelve a ejecutar el instalador
+### "externally-managed-environment" error
+- The installer creates a virtual environment to avoid this problem
+- If it persists, delete the environment and run the installer again
 
-## 🛠️ Desarrollo
+## 🛠️ Development
 
-### Estructura del proyecto
+This is a fork of the original project, intended for further development and feature additions.
+
+### Changes in this fork
+
+- **Multi-distro support**: Added Ubuntu/Debian support alongside Arch Linux
+- **Secure password storage**: Migrated from simple file encryption to system keyring
+- **Dual notifications**: Added system notifications via `notify-send` in addition to tray popups
+- **Test notification button**: Added ability to test notifications from the config dialog
+- **Start menu integration**: Installs a .desktop file in the applications menu
+- **English translation**: Translated UI and installer from Spanish to English
+- **Code cleanup**: Reformatted code and improved structure
+- **Clickable Notifications**: Notifications are now clickable and open Gmail directly.
+- **Improved Email Checking**: More efficient email fetching, limited to the last 24 hours.
+- **Responsive "Check Now"**: The "Check Now" feature is significantly more responsive.
+- **Smart Notification Grouping**: Prevents duplicate notifications and groups multiple new emails into a summary notification.
+- **Snooze Functionality**:
+  - **Snooze state tracking**: Tracks when the snooze expires (for 1 hour).
+  - **Tray menu snooze option**: Added "Snooze for 1 hour" menu item (toggles to "Unsnooze" when active), with tooltip indicating snooze status.
+  - **System notification snooze action**: Notifications now include "Snooze 1 hour" button that activates a 1-hour snooze.
+  - **Visual Snooze Indicator**: A blue "Z" badge appears on the tray icon when snooze is active.
+- **Email List Popup**: Added a sleek, dark-themed popup that displays the latest received emails on a single click.
+- **Thread ID Fetching**: Now fetches Gmail Thread IDs to allow opening specific conversations directly from the email list.
+- **Double-Click Interaction**: Implemented custom click differentiation for single and double-click actions on the tray icon.
+- **Visual Status Badge**: System tray icon now displays a red dot badge when unread emails are present.
+- **Immediate Startup Check**: Added a forced email check upon application launch for instant updates.
+
+
+
+### Project structure
 ```
 gmail-notifier/
-├── gmail-notifier.py    # Script principal
-├── installer-script.sh  # Instalador/desinstalador
-├── README.md            # Documentación
-└── screenshots/         # Capturas de pantalla para la documentación
+├── gmail-notifier.py    # Main script
+├── installer-script.sh  # Installer/uninstaller
+├── README.md            # Documentation
+└── screenshots/         # Screenshots for documentation
 ```
 
-## 📄 Licencia
+## 📄 License
 
-Este proyecto está bajo la licencia Creative Commons Attribution 4.0 International (CC BY 4.0).
+This project is under the Creative Commons Attribution 4.0 International (CC BY 4.0) license.
 
 <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
-  <img alt="Licencia Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" />
+  <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" />
 </a>
 
-## 👨‍💻 Autor
+## 👨‍💻 Authors
 
-**P4NX0S** - [GitHub](https://github.com/panxos)
+**Maintained and Enhanced by:**
+
+*   **utajum (utajum macedonia)** - [GitHub](https://github.com/utajum)
+
+**Original Author:**
+
+*   **P4NX0S** - [GitHub](https://github.com/panxos)
 
 ---
 
 <div align="center">
   <p>
-    <sub>Desarrollado con ❤️ para la comunidad de KDE y Arch Linux</sub>
+    <sub>This is a fork from the original project. You can find the original project <a href="https://github.com/panxos/gmail-notifier">here</a>.</sub>
   </p>
   <p>
-    <sub>© 2025 - P4NX0S - CHILE</sub>
+    <sub>👨‍💻 Maintained and Enhanced by <b>utajum macedonia</b> (forked from P4NX0S © 2025)</sub>
   </p>
 </div>
