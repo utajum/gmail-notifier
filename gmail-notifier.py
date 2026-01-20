@@ -549,6 +549,7 @@ class GmailChecker(QObject):
 class EmailListPopup(QDialog):
     email_clicked = pyqtSignal(str)
     delete_requested = pyqtSignal(str)  # Emits email_id for deletion
+    reshow_requested = pyqtSignal()  # Request to re-show the popup
 
     def __init__(self, emails, gmail_url, parent=None):
         super().__init__(parent)
@@ -677,6 +678,9 @@ class EmailListPopup(QDialog):
         )
         if reply == QMessageBox.Yes:
             self.delete_requested.emit(str(email_id))
+        else:
+            # Re-show the popup when user clicks No
+            self.reshow_requested.emit()
 
     def _resize_to_content(self):
         """Resize popup based on content."""
@@ -888,6 +892,7 @@ class GmailNotifier:
         self.popup = EmailListPopup(self.current_emails, gmail_url)
         self.popup.email_clicked.connect(self.mark_email_read_locally)
         self.popup.delete_requested.connect(self.delete_email)
+        self.popup.reshow_requested.connect(lambda: self.show_popup(check_mail=False))
         cursor_pos = QCursor.pos()
 
         # Adjust position to not go off screen (simple logic)

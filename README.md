@@ -63,6 +63,14 @@
       <td><img src="screenshots/right-click.png?other=true" alt="Right Click" width="400px"/></td>
       <td><img src="screenshots/snooze.png?other=true" alt="Snooze Badge" width="400px"/></td>
     </tr>
+    <tr>
+      <td align="center"><strong>Delete Email Confirmation</strong></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><img src="screenshots/delete-email.png?other=true" alt="Delete Confirmation" width="400px"/></td>
+      <td></td>
+    </tr>
 
   </table>
 </div>
@@ -129,8 +137,11 @@ Gmail Notifier will start working immediately and an icon will appear in the sys
 
 ## 🚀 Usage
 
-- **Left-click** on the icon: Opens a themed popup list of received emails with direct links
-- **Double-click** on the icon: Opens Gmail Inbox in your default browser
+- **Single-click** on the icon: Opens a dark-themed popup showing your recent unread emails.
+  - **Click an email**: Opens that specific email thread in your browser.
+  - **Click Trash icon**: Moves the email to Gmail's Trash (after confirmation).
+  - **Open Gmail Inbox**: Link at the top opens your full inbox.
+- **Double-click** on the icon: Instantly opens Gmail Inbox in your default browser.
 - **Right-click** on the icon: Shows a menu with options
   - **Open Gmail**: Opens Gmail in your browser
   - **Check now**: Forces an immediate check for new emails
@@ -201,10 +212,13 @@ This is a fork of the original project, intended for further development and fea
   - **System notification snooze action**: Notifications now include "Snooze 1 hour" button that activates a 1-hour snooze.
   - **Visual Snooze Indicator**: A blue "Z" badge appears on the tray icon when snooze is active.
 - **Email List Popup**: Added a sleek, dark-themed popup that displays the latest received emails on a single click.
+  - **Quick Delete**: Each email in the list features a trash icon to move the message directly to Gmail's Trash folder.
+  - **Click-to-Open**: Clicking anywhere else on the email opens the specific message thread in your web browser.
 - **Thread ID Fetching**: Now fetches Gmail Thread IDs to allow opening specific conversations directly from the email list.
 - **Double-Click Interaction**: Implemented custom click differentiation for single and double-click actions on the tray icon.
 - **Visual Status Badge**: System tray icon now displays a red dot badge when unread emails are present.
 - **Immediate Startup Check**: Added a forced email check upon application launch for instant updates.
+- **Connection Error Indicator**: Displays an orange "!" badge on the tray icon if connection or credentials fail.
 
 
 
