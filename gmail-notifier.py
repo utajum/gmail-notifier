@@ -27,11 +27,14 @@ from PyQt5.QtWidgets import (
     QDialog,
     QLabel,
     QVBoxLayout,
+    QHBoxLayout,
     QPushButton,
     QGridLayout,
     QCheckBox,
     QListWidget,
     QListWidgetItem,
+    QWidget,
+    QSizePolicy,
 )
 from PyQt5.QtCore import (
     QTimer,
@@ -545,6 +548,7 @@ class GmailChecker(QObject):
 # Popup window to list emails
 class EmailListPopup(QDialog):
     email_clicked = pyqtSignal(str)
+    delete_requested = pyqtSignal(str)  # Emits email_id for deletion
 
     def __init__(self, emails, gmail_url, parent=None):
         super().__init__(parent)
@@ -571,7 +575,7 @@ class EmailListPopup(QDialog):
                 outline: none;
             }
             QListWidget::item {
-                padding: 12px;
+                padding: 8px 12px;
                 border-bottom: 1px solid #2d2d2d;
             }
             QListWidget::item:hover {
@@ -593,29 +597,92 @@ class EmailListPopup(QDialog):
         open_gmail_item.setForeground(QColor("#4da6ff"))
         self.list_widget.addItem(open_gmail_item)
 
+        self._add_email_items()
+
+        self.list_widget.itemClicked.connect(self.on_item_clicked)
+        layout.addWidget(self.list_widget)
+
+        self._resize_to_content()
+
+    def _add_email_items(self):
+        """Add email items with delete buttons to the list."""
         if self.emails:
             for email_data in self.emails:
-                sender = email_data.get("sender", "Unknown")
-                subject = email_data.get("subject", "(No Subject)")
-                item_text = f"{sender}\n{subject}"
-                item = QListWidgetItem(item_text)
-                item.setData(Qt.UserRole, email_data.get("link"))
-                item.setData(Qt.UserRole + 1, email_data.get("id"))
-                self.list_widget.addItem(item)
-        elif not self.emails:
+                self._add_email_row(email_data)
+        else:
             item = QListWidgetItem("No new emails")
             item.setFlags(Qt.NoItemFlags)
             item.setForeground(QColor("#888888"))
             item.setTextAlignment(Qt.AlignCenter)
             self.list_widget.addItem(item)
 
-        self.list_widget.itemClicked.connect(self.on_item_clicked)
-        layout.addWidget(self.list_widget)
+    def _add_email_row(self, email_data):
+        """Add a single email row with text and delete button."""
+        sender = email_data.get("sender", "Unknown")
+        subject = email_data.get("subject", "(No Subject)")
+        email_id = email_data.get("id")
+        link = email_data.get("link")
 
-        # Set size (approximate height calculation)
+        # Create list item
+        item = QListWidgetItem()
+        item.setData(Qt.UserRole, link)
+        item.setData(Qt.UserRole + 1, email_id)
+        self.list_widget.addItem(item)
+
+        # Create custom widget for the row
+        row_widget = QWidget()
+        row_layout = QHBoxLayout(row_widget)
+        row_layout.setContentsMargins(0, 4, 0, 4)
+        row_layout.setSpacing(8)
+
+        # Email text label
+        text_label = QLabel(f"<b>{sender}</b><br>{subject}")
+        text_label.setStyleSheet("color: #e0e0e0; background: transparent;")
+        text_label.setWordWrap(True)
+        text_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        row_layout.addWidget(text_label)
+
+        # Delete button with trash icon
+        delete_btn = QPushButton()
+        delete_btn.setIcon(QIcon.fromTheme("user-trash"))
+        delete_btn.setFixedSize(28, 28)
+        delete_btn.setCursor(Qt.PointingHandCursor)
+        delete_btn.setStyleSheet("""
+            QPushButton {
+                background-color: transparent;
+                border: none;
+                border-radius: 4px;
+            }
+            QPushButton:hover {
+                background-color: #ff5555;
+            }
+        """)
+        delete_btn.clicked.connect(
+            lambda checked, eid=email_id: self._on_delete_clicked(eid)
+        )
+        row_layout.addWidget(delete_btn)
+
+        # Set the custom widget on the item
+        item.setSizeHint(row_widget.sizeHint())
+        self.list_widget.setItemWidget(item, row_widget)
+
+    def _on_delete_clicked(self, email_id):
+        """Handle delete button click with confirmation."""
+        reply = QMessageBox.question(
+            self,
+            "Delete Email",
+            "Are you sure you want to delete this email?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No,
+        )
+        if reply == QMessageBox.Yes:
+            self.delete_requested.emit(str(email_id))
+
+    def _resize_to_content(self):
+        """Resize popup based on content."""
         item_count = self.list_widget.count()
-        height = min(max(item_count * 60 + 20, 100), 500)
-        self.resize(320, height)
+        height = min(max(item_count * 65 + 20, 100), 500)
+        self.resize(350, height)
 
     def on_item_clicked(self, item):
         link = item.data(Qt.UserRole)
@@ -636,26 +703,8 @@ class EmailListPopup(QDialog):
         while self.list_widget.count() > 1:
             self.list_widget.takeItem(1)
 
-        if self.emails:
-            for email_data in self.emails:
-                sender = email_data.get("sender", "Unknown")
-                subject = email_data.get("subject", "(No Subject)")
-                item_text = f"{sender}\n{subject}"
-                item = QListWidgetItem(item_text)
-                item.setData(Qt.UserRole, email_data.get("link"))
-                item.setData(Qt.UserRole + 1, email_data.get("id"))
-                self.list_widget.addItem(item)
-        else:
-            item = QListWidgetItem("No new emails")
-            item.setFlags(Qt.NoItemFlags)
-            item.setForeground(QColor("#888888"))
-            item.setTextAlignment(Qt.AlignCenter)
-            self.list_widget.addItem(item)
-
-        # Resize based on new content
-        item_count = self.list_widget.count()
-        height = min(max(item_count * 60 + 20, 100), 500)
-        self.resize(320, height)
+        self._add_email_items()
+        self._resize_to_content()
 
 
 # Main class for the application
@@ -829,14 +878,16 @@ class GmailNotifier:
         # Timer expired, meaning it was a single click
         self.show_popup()
 
-    def show_popup(self):
+    def show_popup(self, check_mail=True):
         # Trigger a check for new emails when opening the popup
-        self.check_now()
+        if check_mail:
+            self.check_now()
 
         # Create and show the popup near the cursor
         gmail_url = self.settings.get("gmail_url", "https://mail.google.com")
         self.popup = EmailListPopup(self.current_emails, gmail_url)
         self.popup.email_clicked.connect(self.mark_email_read_locally)
+        self.popup.delete_requested.connect(self.delete_email)
         cursor_pos = QCursor.pos()
 
         # Adjust position to not go off screen (simple logic)
@@ -867,6 +918,47 @@ class GmailNotifier:
         # Trigger a full check from server after 30 seconds
         # This gives time for the user to read/archive the email so the next check reflects the true state
         QTimer.singleShot(20000, self.check_now)
+
+    def delete_email(self, email_id):
+        """Delete an email by moving it to trash. Runs in background thread."""
+        # Remove from local list immediately
+        self.current_emails = [
+            e for e in self.current_emails if str(e.get("id")) != str(email_id)
+        ]
+
+        # Update tray icon badge
+        self.update_tray_icon(len(self.current_emails) > 0, self.is_snoozed())
+
+        # Re-show the popup with updated emails (don't trigger another mail check)
+        self.show_popup(check_mail=False)
+
+        # Run IMAP delete in background
+        def do_delete():
+            try:
+                username = self.settings.get("username", "")
+                password = self.settings.get("password", "")
+
+                if not username or not password:
+                    return
+
+                mail = imaplib.IMAP4_SSL("imap.gmail.com")
+                mail.login(username, password)
+                mail.select("inbox")
+
+                # Move the email to trash
+                # Gmail uses the \Trash flag or we can COPY to [Gmail]/Trash then delete
+                mail.store(email_id, "+X-GM-LABELS", "\\Trash")
+                mail.store(email_id, "+FLAGS", "\\Deleted")
+                mail.expunge()
+
+                mail.close()
+                mail.logout()
+            except Exception as e:
+                # Emit error on main thread
+                error_msg = f"Failed to delete email: {str(e)}"
+                QTimer.singleShot(0, lambda: self.on_error(error_msg))
+
+        threading.Thread(target=do_delete, daemon=True).start()
 
     def check_now(self):
         # Set flag to force an immediate check in the next cycle
