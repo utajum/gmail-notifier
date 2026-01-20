@@ -162,7 +162,8 @@ class ConfigDialog(QDialog):
         self.init_ui()
 
     def init_ui(self):
-        self.setWindowTitle("Configure Gmail Notifier")
+        self.setWindowTitle("Gmail Notifier - Configuration")
+        self.setWindowIcon(QIcon.fromTheme("mail-unread"))
         self.setMinimumWidth(400)
 
         layout = QGridLayout()
@@ -716,6 +717,9 @@ class GmailNotifier:
     def __init__(self):
         self.app = QApplication(sys.argv)
         self.app.setQuitOnLastWindowClosed(False)
+        self.app.setApplicationName("Gmail Notifier")
+        self.app.setDesktopFileName("gmail-notifier")
+        self.app.setWindowIcon(QIcon.fromTheme("mail-unread"))
 
         # Current emails storage
         self.current_emails = []
