@@ -690,7 +690,7 @@ class EmailListPopup(QDialog):
         msg_box.setWindowIcon(QIcon.fromTheme("mail-unread"))
         msg_box.setText("Are you sure you want to delete this email?")
         msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        msg_box.setDefaultButton(QMessageBox.No)
+        msg_box.setDefaultButton(QMessageBox.Yes)
         reply = msg_box.exec_()
 
         if reply == QMessageBox.Yes:
