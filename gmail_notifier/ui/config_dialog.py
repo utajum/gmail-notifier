@@ -23,7 +23,7 @@ from PyQt5.QtWidgets import (
     QMessageBox,
     QSystemTrayIcon,
 )
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, Qt
 
 from gmail_notifier.config import ICON_PATH, save_settings
 from gmail_notifier.notifications import send_system_notification
@@ -64,6 +64,12 @@ class ConfigDialog(QDialog):
         """Initialize the dialog UI components."""
         self.setWindowTitle("Gmail Notifier - Configuration")
         self.setWindowIcon(get_gmail_icon())
+        self.setWindowFlags(
+            self.windowFlags()
+            | Qt.WindowSystemMenuHint
+            | Qt.WindowMinMaxButtonsHint
+            | Qt.WindowCloseButtonHint
+        )
         self.setMinimumWidth(400)
 
         layout = QGridLayout()

@@ -9,6 +9,7 @@ of unread emails in a popup near the system tray.
 import webbrowser
 
 from PyQt5.QtWidgets import (
+    QApplication,
     QDialog,
     QLabel,
     QVBoxLayout,
@@ -20,7 +21,7 @@ from PyQt5.QtWidgets import (
     QFrame,
     QMessageBox,
 )
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal, QEvent
 from PyQt5.QtGui import QIcon
 
 from gmail_notifier.tray_icon import get_gmail_icon
@@ -53,7 +54,12 @@ class EmailListPopup(QDialog):
         super().__init__(parent)
         self.emails = emails
         self.gmail_url = gmail_url
-        self.setWindowFlags(Qt.Popup | Qt.FramelessWindowHint)
+        self.setWindowFlags(
+            Qt.Window | Qt.WindowStaysOnTopHint | Qt.WindowCloseButtonHint
+        )
+        self.setWindowTitle("Gmail Notifier")
+        self.setWindowIcon(get_gmail_icon())
+        self._event_filter_installed = False
         self.init_ui()
 
     def init_ui(self):
@@ -63,7 +69,6 @@ class EmailListPopup(QDialog):
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
         self.setLayout(main_layout)
-        self.setWindowIcon(get_gmail_icon())
 
         # Container widget with dark background
         container = QWidget()
@@ -132,6 +137,38 @@ class EmailListPopup(QDialog):
 
         main_layout.addWidget(container)
         self._resize_to_content()
+
+    def focusOutEvent(self, event):
+        """Close popup when it loses focus."""
+        self.close()
+        super().focusOutEvent(event)
+
+    def showEvent(self, event):
+        """Install event filter to detect clicks outside the popup."""
+        super().showEvent(event)
+        app = QApplication.instance()
+        if app and not self._event_filter_installed:
+            app.installEventFilter(self)
+            self._event_filter_installed = True
+
+    def closeEvent(self, event):
+        """Remove event filter on close."""
+        app = QApplication.instance()
+        if app and self._event_filter_installed:
+            app.removeEventFilter(self)
+            self._event_filter_installed = False
+        super().closeEvent(event)
+
+    def eventFilter(self, obj, event):
+        if event.type() == QEvent.MouseButtonPress and self.isVisible():
+            if not self.geometry().contains(event.globalPos()):
+                self.close()
+        return super().eventFilter(obj, event)
+
+    def event(self, event):
+        if event.type() == QEvent.WindowDeactivate:
+            self.close()
+        return super().event(event)
 
     def _add_email_items(self):
         """Add email items to the content layout."""
