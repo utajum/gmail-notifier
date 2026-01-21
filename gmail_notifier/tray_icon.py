@@ -1,0 +1,137 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""Tray icon utilities for Gmail Notifier.
+
+This module provides functions for loading the Gmail icon and
+creating badge overlays for different states (unread, snoozed, error).
+"""
+
+import os
+
+from PyQt5.QtCore import Qt, QRect
+from PyQt5.QtGui import QIcon, QColor, QFont, QPainter
+
+
+# Common paths where Gmail icon might be installed
+GMAIL_ICON_PATHS = [
+    "/usr/share/icons/hicolor/scalable/apps/gmail.svg",
+    "/usr/share/icons/hicolor/48x48/apps/gmail.png",
+    "/usr/share/icons/breeze/apps/48/gmail.svg",
+    "/usr/share/pixmaps/gmail.png",
+]
+
+
+def get_gmail_icon():
+    """Find Gmail icon from common system paths.
+
+    Searches several common icon locations for a Gmail icon.
+    Falls back to the system 'mail-unread' theme icon if not found.
+
+    Returns:
+        QIcon: Gmail icon or fallback mail-unread theme icon.
+    """
+    for path in GMAIL_ICON_PATHS:
+        if os.path.exists(path):
+            return QIcon(path)
+
+    # If the icon is not found, use a system icon
+    return QIcon.fromTheme("mail-unread")
+
+
+def create_badge_icon(base_icon, has_unread=False, is_snoozed=False, is_error=False):
+    """Create icon with badge overlay.
+
+    Badge priority: error (!) > snoozed (Z) > unread (red dot)
+
+    If no badge state is active, returns the base icon unchanged.
+
+    Args:
+        base_icon: Base QIcon to add badge to.
+        has_unread: Show red dot for unread emails.
+        is_snoozed: Show "Z" for snoozed state.
+        is_error: Show "!" for error state.
+
+    Returns:
+        QIcon: Icon with appropriate badge, or base_icon if no badge needed.
+    """
+    # If no interesting state, return base icon
+    if not has_unread and not is_snoozed and not is_error:
+        return base_icon
+
+    # Create a pixmap from the icon
+    # Size 64x64 provides enough resolution for most trays
+    pixmap = base_icon.pixmap(64, 64)
+    if pixmap.isNull():
+        return base_icon
+
+    painter = QPainter(pixmap)
+    painter.setRenderHint(QPainter.Antialiasing)
+
+    if is_error:
+        _draw_error_badge(painter, pixmap)
+    elif is_snoozed:
+        _draw_snooze_badge(painter, pixmap)
+    elif has_unread:
+        _draw_unread_badge(painter, pixmap)
+
+    painter.end()
+
+    return QIcon(pixmap)
+
+
+def _draw_error_badge(painter, pixmap):
+    """Draw orange circle with '!' for error state.
+
+    Args:
+        painter: Active QPainter on the pixmap.
+        pixmap: The pixmap being painted on.
+    """
+    # Orange circle background
+    painter.setBrush(QColor("#ff9800"))  # Material Orange
+    painter.setPen(Qt.NoPen)
+    dot_size = 24
+    painter.drawEllipse(pixmap.width() - dot_size - 2, 2, dot_size, dot_size)
+
+    # White exclamation mark
+    painter.setPen(QColor("white"))
+    font = QFont()
+    font.setPixelSize(18)
+    font.setBold(True)
+    painter.setFont(font)
+    painter.drawText(
+        QRect(pixmap.width() - dot_size - 2, 2, dot_size, dot_size),
+        Qt.AlignCenter,
+        "!",
+    )
+
+
+def _draw_snooze_badge(painter, pixmap):
+    """Draw blue 'Z' for snoozed state.
+
+    Args:
+        painter: Active QPainter on the pixmap.
+        pixmap: The pixmap being painted on.
+    """
+    painter.setPen(QColor("#4da6ff"))  # Blue color
+    font = QFont()
+    font.setPixelSize(28)
+    font.setBold(True)
+    painter.setFont(font)
+    # Draw at top right
+    painter.drawText(
+        pixmap.rect().adjusted(0, -5, -4, 0), Qt.AlignRight | Qt.AlignTop, "Z"
+    )
+
+
+def _draw_unread_badge(painter, pixmap):
+    """Draw red dot for unread emails.
+
+    Args:
+        painter: Active QPainter on the pixmap.
+        pixmap: The pixmap being painted on.
+    """
+    dot_size = 20  # Relative to 64x64
+    painter.setBrush(QColor("#f44336"))  # Material Red
+    painter.setPen(Qt.NoPen)
+    # Position it slightly offset from the edge
+    painter.drawEllipse(pixmap.width() - dot_size - 2, 2, dot_size, dot_size)

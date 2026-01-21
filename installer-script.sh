@@ -77,15 +77,65 @@ ${CYAN}NOTES:${NC}
 EOF
 }
 
+# Stop running Gmail Notifier processes
+stop_running_instances() {
+    # Use specific patterns to avoid killing unrelated processes
+    local patterns=("python.*gmail_notifier" "python.*gmail-notifier" "gmail-notifier$")
+    local found=0
+    
+    for pattern in "${patterns[@]}"; do
+        if pgrep -f "$pattern" > /dev/null 2>&1; then
+            found=1
+            break
+        fi
+    done
+    
+    if [ $found -eq 1 ]; then
+        echo -e "${BLUE}Stopping running Gmail Notifier instances...${NC}"
+        
+        # Try graceful termination first
+        for pattern in "${patterns[@]}"; do
+            pkill -f "$pattern" 2>/dev/null
+        done
+        
+        # Wait up to 5 seconds for processes to terminate
+        local waited=0
+        while [ $waited -lt 5 ]; do
+            local still_running=0
+            for pattern in "${patterns[@]}"; do
+                if pgrep -f "$pattern" > /dev/null 2>&1; then
+                    still_running=1
+                    break
+                fi
+            done
+            
+            if [ $still_running -eq 0 ]; then
+                echo -e "  ${CHECK_MARK} Gmail Notifier stopped"
+                return 0
+            fi
+            
+            sleep 1
+            waited=$((waited + 1))
+        done
+        
+        # Force kill if still running
+        echo -e "${YELLOW}Process didn't terminate gracefully, forcing...${NC}"
+        for pattern in "${patterns[@]}"; do
+            pkill -9 -f "$pattern" 2>/dev/null
+        done
+        sleep 1
+        echo -e "  ${CHECK_MARK} Gmail Notifier force stopped"
+    else
+        echo -e "${BLUE}No running Gmail Notifier instances found.${NC}"
+    fi
+}
+
 # Uninstall function
 uninstall() {
     echo -e "${YELLOW}===== Uninstalling Gmail Notifier =====${NC}"
     
-    # Check if it is running and kill it
-    if pgrep -f "gmail-notifier" > /dev/null; then
-        echo -e "${BLUE}Stopping Gmail Notifier process...${NC}"
-        pkill -f "gmail-notifier"
-    fi
+    # Stop any running instances
+    stop_running_instances
     
     # Remove files and directories
     echo -e "${BLUE}Removing files...${NC}"
@@ -164,13 +214,7 @@ uninstall() {
 # Installation function
 install() {
     # Stop any running instances of Gmail Notifier
-    if pgrep -f "gmail-notifier" > /dev/null; then
-        echo -e "${BLUE}Stopping any running instances of Gmail Notifier...${NC}"
-        pkill -f "gmail-notifier"
-        sleep 1 # Give some time for the process to terminate
-    else
-        echo -e "${BLUE}No running instances of Gmail Notifier found.${NC}"
-    fi
+    stop_running_instances
 
     # Check system dependencies
     echo -e "${BLUE}Checking system dependencies...${NC}"
@@ -242,6 +286,12 @@ install() {
     # Copy the package directory to the configuration directory
     echo -e "${BLUE}Copying application files...${NC}"
     
+    # Remove old package directory if it exists (idempotent reinstall)
+    if [ -d "$CONFIG_DIR/gmail_notifier" ]; then
+        rm -rf "$CONFIG_DIR/gmail_notifier"
+        echo -e "  ${CHECK_MARK} Removed old package directory"
+    fi
+    
     # Copy the gmail_notifier package
     if [ -d "gmail_notifier" ]; then
         cp -r gmail_notifier "$CONFIG_DIR/"
@@ -257,6 +307,11 @@ install() {
         exit 1
     fi
     
+    # Remove old entry point if it exists
+    if [ -f "$CONFIG_DIR/gmail-notifier.py" ]; then
+        rm "$CONFIG_DIR/gmail-notifier.py"
+    fi
+    
     # Copy the main entry point script
     cp gmail-notifier.py "$CONFIG_DIR/gmail-notifier.py"
     if [ $? -eq 0 ]; then
@@ -267,21 +322,34 @@ install() {
         exit 1
     fi
     
-    # Create a virtual environment
-    echo -e "${BLUE}Creating virtual environment for Python dependencies...${NC}"
-    python -m venv "$VENV_DIR"
-    if [ $? -eq 0 ]; then
-        echo -e "  ${CHECK_MARK} Virtual environment created in $VENV_DIR"
+    # Create or update virtual environment
+    echo -e "${BLUE}Setting up Python virtual environment...${NC}"
+    
+    # Check if venv exists and is valid
+    if [ -f "$VENV_DIR/bin/python" ] && [ -f "$VENV_DIR/bin/pip" ]; then
+        echo -e "  ${CHECK_MARK} Virtual environment already exists"
     else
-        echo -e "  ${CROSS_MARK} Error creating the virtual environment"
-        echo -e "${RED}Verify that python-virtualenv is installed correctly.${NC}"
-        exit 1
+        # Remove broken venv if it exists
+        if [ -d "$VENV_DIR" ]; then
+            echo -e "  ${YELLOW}Removing broken virtual environment...${NC}"
+            rm -rf "$VENV_DIR"
+        fi
+        
+        # Create new venv
+        python -m venv "$VENV_DIR"
+        if [ $? -eq 0 ]; then
+            echo -e "  ${CHECK_MARK} Virtual environment created in $VENV_DIR"
+        else
+            echo -e "  ${CROSS_MARK} Error creating the virtual environment"
+            echo -e "${RED}Verify that python-virtualenv is installed correctly.${NC}"
+            exit 1
+        fi
     fi
     
-    # Install dependencies in the virtual environment
+    # Install/upgrade dependencies in the virtual environment
     echo -e "${BLUE}Installing dependencies in the virtual environment...${NC}"
-    "$VENV_DIR/bin/pip" install --upgrade pip
-    "$VENV_DIR/bin/pip" install PyQt5 keyring
+    "$VENV_DIR/bin/pip" install --upgrade pip -q
+    "$VENV_DIR/bin/pip" install --upgrade PyQt5 keyring -q
     if [ $? -eq 0 ]; then
         echo -e "  ${CHECK_MARK} Dependencies installed successfully"
     else
