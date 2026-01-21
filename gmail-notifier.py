@@ -745,9 +745,9 @@ class EmailListPopup(QDialog):
 
         # Create message box with mail icon
         msg_box = QMessageBox()
-        msg_box.setWindowTitle("Delete Email")
+        msg_box.setWindowTitle("Delete Thread")
         msg_box.setWindowIcon(QIcon.fromTheme("mail-unread"))
-        msg_box.setText("Are you sure you want to delete this email?")
+        msg_box.setText("Are you sure you want to delete this thread?")
         msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
         msg_box.setDefaultButton(QMessageBox.Yes)
         reply = msg_box.exec_()
@@ -1066,10 +1066,27 @@ class GmailNotifier:
         QTimer.singleShot(20000, self.check_now)
 
     def delete_email(self, email_id):
-        """Delete an email by moving it to trash. Runs in background thread."""
-        # Remove from ungrouped list immediately
+        """Delete all emails in a thread by moving them to trash. Runs in background thread."""
+        # Find the thread_id for this email
+        thread_id = None
+        for e in self._all_emails:
+            if str(e.get("id")) == str(email_id):
+                thread_id = e.get("thread_id")
+                break
+
+        # Get all email IDs in this thread
+        if thread_id:
+            emails_to_delete = [
+                e for e in self._all_emails if e.get("thread_id") == thread_id
+            ]
+            email_ids_to_delete = [str(e.get("id")) for e in emails_to_delete]
+        else:
+            # No thread_id, just delete the single email
+            email_ids_to_delete = [str(email_id)]
+
+        # Remove all thread emails from local list
         self._all_emails = [
-            e for e in self._all_emails if str(e.get("id")) != str(email_id)
+            e for e in self._all_emails if str(e.get("id")) not in email_ids_to_delete
         ]
 
         # Re-group for display
@@ -1094,23 +1111,24 @@ class GmailNotifier:
                 mail.login(username, password)
                 mail.select("inbox")
 
-                # Convert email_id to bytes if it's a string
-                msg_id = (
-                    email_id if isinstance(email_id, bytes) else str(email_id).encode()
-                )
+                # Delete all emails in the thread
+                for eid in email_ids_to_delete:
+                    msg_id = eid.encode() if isinstance(eid, str) else eid
 
-                # For Gmail, copy to Trash folder then delete from inbox
-                # This is the proper way to delete in Gmail via IMAP
-                copy_result = mail.copy(msg_id, "[Gmail]/Trash")
-                if copy_result[0] == "OK":
-                    mail.store(msg_id, "+FLAGS", "\\Deleted")
-                    mail.expunge()
+                    # For Gmail, copy to Trash folder then delete from inbox
+                    # This is the proper way to delete in Gmail via IMAP
+                    copy_result = mail.copy(msg_id, "[Gmail]/Trash")
+                    if copy_result[0] == "OK":
+                        mail.store(msg_id, "+FLAGS", "\\Deleted")
+
+                # Expunge all deleted emails at once
+                mail.expunge()
 
                 mail.close()
                 mail.logout()
             except Exception as e:
                 # Emit error on main thread
-                error_msg = f"Failed to delete email: {str(e)}"
+                error_msg = f"Failed to delete thread: {str(e)}"
                 QTimer.singleShot(0, lambda: self.on_error(error_msg))
 
         threading.Thread(target=do_delete, daemon=True).start()
