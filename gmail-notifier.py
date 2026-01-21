@@ -15,6 +15,7 @@ import subprocess
 import threading
 from datetime import datetime, timedelta
 from email.header import decode_header
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 from PyQt5.QtWidgets import (
     QApplication,
@@ -405,9 +406,6 @@ class GmailChecker(QObject):
             if status != "OK":
                 mail.close()
                 mail.logout()
-            if status != "OK":
-                mail.close()
-                mail.logout()
                 return None
 
             email_data = []
@@ -415,10 +413,10 @@ class GmailChecker(QObject):
             # Get unread message IDs
             message_ids = messages[0].split()
 
-            # Check the last 10 unread emails at most
-            for msg_id in message_ids[-10:]:
+            # Check the last 200 unread emails at most
+            for msg_id in message_ids[-200:]:
                 status, msg_data = mail.fetch(
-                    msg_id, "(X-GM-THRID BODY.PEEK[HEADER.FIELDS (FROM SUBJECT)])"
+                    msg_id, "(X-GM-THRID BODY.PEEK[HEADER.FIELDS (FROM SUBJECT DATE)])"
                 )
 
                 if status != "OK":
@@ -446,9 +444,19 @@ class GmailChecker(QObject):
 
                 msg = email.message_from_bytes(raw_email)
 
-                # Get sender and subject with improved encoding handling
+                # Get sender, subject, and date with improved encoding handling
                 subject = self._decode_header_safely(msg["Subject"])
                 sender = self._decode_header_safely(msg["From"])
+                date_str = msg["Date"]
+
+                # Parse date to timestamp for sorting
+                timestamp = 0
+                if date_str:
+                    try:
+                        dt = parsedate_to_datetime(date_str)
+                        timestamp = dt.timestamp()
+                    except Exception:
+                        pass
 
                 # Filter only the sender's name if available
                 if "<" in sender:
@@ -461,14 +469,16 @@ class GmailChecker(QObject):
                         "subject": subject,
                         "sender": sender,
                         "link": link,
+                        "timestamp": timestamp,
                     }
                 )
 
             mail.close()
             mail.logout()
 
-            # Reverse to have newest emails first
-            return email_data[::-1]
+            # Sort by timestamp, newest first
+            email_data.sort(key=lambda e: e.get("timestamp", 0), reverse=True)
+            return email_data
 
         except Exception as e:
             error_msg = f"Error checking emails: {str(e)}"
@@ -728,10 +738,20 @@ class EmailListPopup(QDialog):
         """Update the email list with new emails."""
         self.emails = emails
 
-        # Clear all items except the first one (Open Gmail)
-        while self.list_widget.count() > 1:
-            self.list_widget.takeItem(1)
+        # Clear all items and their widgets completely
+        self.list_widget.clear()
 
+        # Re-add Open Gmail item
+        open_gmail_item = QListWidgetItem("Open Gmail Inbox")
+        open_gmail_item.setData(Qt.UserRole, self.gmail_url)
+        open_gmail_item.setTextAlignment(Qt.AlignCenter)
+        font = open_gmail_item.font()
+        font.setBold(True)
+        open_gmail_item.setFont(font)
+        open_gmail_item.setForeground(QColor("#4da6ff"))
+        self.list_widget.addItem(open_gmail_item)
+
+        # Re-add email items
         self._add_email_items()
         self._resize_to_content()
 
@@ -745,7 +765,7 @@ class GmailNotifier:
         self.app.setDesktopFileName("gmail-notifier")
         self.app.setWindowIcon(QIcon.fromTheme("mail-unread"))
 
-        # Current emails storage
+        # Current emails storage (single source of truth)
         self.current_emails = []
 
         # Click timer for single/double click differentiation
@@ -910,7 +930,26 @@ class GmailNotifier:
         # Timer expired, meaning it was a single click
         self.show_popup()
 
+    def _dedup_emails(self, emails):
+        """Remove duplicate emails by ID and sort by timestamp (newest first)."""
+        seen_ids = set()
+        deduped = []
+        for email in emails:
+            email_id = str(email.get("id"))
+            if email_id and email_id not in seen_ids:
+                seen_ids.add(email_id)
+                deduped.append(email)
+        # Always sort by timestamp, newest first
+        deduped.sort(key=lambda e: e.get("timestamp", 0), reverse=True)
+        return deduped
+
     def show_popup(self, check_mail=True):
+        # Close and destroy any existing popup first
+        if self.popup is not None:
+            self.popup.close()
+            self.popup.deleteLater()
+            self.popup = None
+
         # Trigger a check for new emails when opening the popup
         if check_mail:
             self.check_now()
@@ -1051,15 +1090,23 @@ class GmailNotifier:
         # Clear error state on successful check
         self.is_error = False
 
-        # Update current list of emails
+        # Deduplicate emails by ID
+        emails = self._dedup_emails(emails)
+
+        # Clean up notified_email_ids: only keep IDs that are still on server
+        # This prevents the set from growing indefinitely
+        server_ids = {str(e.get("id")) for e in emails}
+        self.notified_email_ids = self.notified_email_ids & server_ids
+
+        # Update current list of emails (single source of truth)
         self.current_emails = emails
 
         # Update tray icon badge
-        self.update_tray_icon(len(emails) > 0, self.is_snoozed())
+        self.update_tray_icon(len(self.current_emails) > 0, self.is_snoozed())
 
         # Update popup if it's open
-        if hasattr(self, "popup") and self.popup is not None and self.popup.isVisible():
-            self.popup.update_emails(emails)
+        if self.popup is not None and self.popup.isVisible():
+            self.popup.update_emails(self.current_emails)
 
         if not emails:
             return
