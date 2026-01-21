@@ -23,6 +23,8 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QIcon
 
+from gmail_notifier.tray_icon import get_gmail_icon
+
 
 class EmailListPopup(QDialog):
     """Popup dialog showing list of unread emails.
@@ -61,6 +63,7 @@ class EmailListPopup(QDialog):
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
         self.setLayout(main_layout)
+        self.setWindowIcon(get_gmail_icon())
 
         # Container widget with dark background
         container = QWidget()
@@ -235,7 +238,7 @@ class EmailListPopup(QDialog):
         # Create message box with mail icon
         msg_box = QMessageBox()
         msg_box.setWindowTitle("Delete Thread")
-        msg_box.setWindowIcon(QIcon.fromTheme("mail-unread"))
+        msg_box.setWindowIcon(get_gmail_icon())
         msg_box.setText("Are you sure you want to delete this thread?")
         msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
         msg_box.setDefaultButton(QMessageBox.Yes)

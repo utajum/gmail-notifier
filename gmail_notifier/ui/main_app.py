@@ -66,7 +66,7 @@ class GmailNotifier:
         self.app.setQuitOnLastWindowClosed(False)
         self.app.setApplicationName("Gmail Notifier")
         self.app.setDesktopFileName("gmail-notifier")
-        self.app.setWindowIcon(QIcon.fromTheme("mail-unread"))
+        self.app.setWindowIcon(get_gmail_icon())
 
         # Email storage
         # _all_emails: ungrouped individual emails (source of truth)

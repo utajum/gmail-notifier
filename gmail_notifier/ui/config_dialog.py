@@ -23,11 +23,11 @@ from PyQt5.QtWidgets import (
     QMessageBox,
     QSystemTrayIcon,
 )
-from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSignal
 
-from gmail_notifier.config import save_settings
+from gmail_notifier.config import ICON_PATH, save_settings
 from gmail_notifier.notifications import send_system_notification
+from gmail_notifier.tray_icon import get_gmail_icon
 
 
 class ConfigDialog(QDialog):
@@ -63,7 +63,7 @@ class ConfigDialog(QDialog):
     def init_ui(self):
         """Initialize the dialog UI components."""
         self.setWindowTitle("Gmail Notifier - Configuration")
-        self.setWindowIcon(QIcon.fromTheme("mail-unread"))
+        self.setWindowIcon(get_gmail_icon())
         self.setMinimumWidth(400)
 
         layout = QGridLayout()
@@ -167,7 +167,7 @@ class ConfigDialog(QDialog):
 Name=Gmail Notifier
 Comment=Gmail Notifier for KDE
 Exec={script_path}
-Icon=gmail
+Icon={ICON_PATH}
 Terminal=false
 Type=Application
 Categories=Network;Email;
