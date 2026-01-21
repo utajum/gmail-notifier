@@ -470,6 +470,7 @@ class GmailChecker(QObject):
                         "sender": sender,
                         "link": link,
                         "timestamp": timestamp,
+                        "thread_id": thread_id_hex,
                     }
                 )
 
@@ -636,6 +637,11 @@ class EmailListPopup(QDialog):
         subject = email_data.get("subject", "(No Subject)")
         email_id = email_data.get("id")
         link = email_data.get("link")
+        thread_count = email_data.get("thread_count", 1)
+
+        # Add thread count to subject if more than 1 email in thread
+        if thread_count > 1:
+            subject = f"{subject} ({thread_count})"
 
         # Create list item
         item = QListWidgetItem()
@@ -765,8 +771,11 @@ class GmailNotifier:
         self.app.setDesktopFileName("gmail-notifier")
         self.app.setWindowIcon(QIcon.fromTheme("mail-unread"))
 
-        # Current emails storage (single source of truth)
+        # Current emails storage
+        # current_emails: grouped by thread (for display)
+        # _all_emails: ungrouped individual emails (for notifications/tracking)
         self.current_emails = []
+        self._all_emails = []
 
         # Click timer for single/double click differentiation
         self.click_timer = QTimer()
@@ -943,6 +952,44 @@ class GmailNotifier:
         deduped.sort(key=lambda e: e.get("timestamp", 0), reverse=True)
         return deduped
 
+    def _group_by_thread(self, emails):
+        """Group emails by thread ID, return one entry per thread with unread count.
+
+        Returns list of emails where each entry represents a thread:
+        - Uses the newest email's data (sender, subject, link, etc.)
+        - Adds 'thread_count' field with number of unread emails in thread
+        - Sorted by newest email timestamp (newest thread first)
+        """
+        if not emails:
+            return []
+
+        # Group emails by thread_id
+        threads = {}
+        for email in emails:
+            thread_id = email.get("thread_id", "")
+            # If no thread_id, treat each email as its own thread
+            if not thread_id:
+                thread_id = f"_no_thread_{email.get('id', '')}"
+
+            if thread_id not in threads:
+                threads[thread_id] = []
+            threads[thread_id].append(email)
+
+        # For each thread, keep the newest email and add count
+        grouped = []
+        for thread_id, thread_emails in threads.items():
+            # Sort thread emails by timestamp, newest first
+            thread_emails.sort(key=lambda e: e.get("timestamp", 0), reverse=True)
+            # Take the newest email as the representative
+            newest = thread_emails[0].copy()
+            # Add count of unread emails in this thread
+            newest["thread_count"] = len(thread_emails)
+            grouped.append(newest)
+
+        # Sort all threads by their newest email's timestamp, newest first
+        grouped.sort(key=lambda e: e.get("timestamp", 0), reverse=True)
+        return grouped
+
     def show_popup(self, check_mail=True):
         # Close and destroy any existing popup first
         if self.popup is not None:
@@ -979,27 +1026,33 @@ class GmailNotifier:
 
     def mark_email_read_locally(self, email_id):
         """Removes the email from the local list and updates the badge immediately."""
-        # Remove the email with the matching ID
-        self.current_emails = [
-            e for e in self.current_emails if str(e.get("id")) != str(email_id)
+        # Remove the email with the matching ID from ungrouped list
+        self._all_emails = [
+            e for e in self._all_emails if str(e.get("id")) != str(email_id)
         ]
 
-        # Update tray icon badge
-        self.update_tray_icon(len(self.current_emails) > 0, self.is_snoozed())
+        # Re-group for display
+        self.current_emails = self._group_by_thread(self._all_emails)
 
-        # Trigger a full check from server after 30 seconds
+        # Update tray icon badge (based on ungrouped count)
+        self.update_tray_icon(len(self._all_emails) > 0, self.is_snoozed())
+
+        # Trigger a full check from server after 20 seconds
         # This gives time for the user to read/archive the email so the next check reflects the true state
         QTimer.singleShot(20000, self.check_now)
 
     def delete_email(self, email_id):
         """Delete an email by moving it to trash. Runs in background thread."""
-        # Remove from local list immediately
-        self.current_emails = [
-            e for e in self.current_emails if str(e.get("id")) != str(email_id)
+        # Remove from ungrouped list immediately
+        self._all_emails = [
+            e for e in self._all_emails if str(e.get("id")) != str(email_id)
         ]
 
-        # Update tray icon badge
-        self.update_tray_icon(len(self.current_emails) > 0, self.is_snoozed())
+        # Re-group for display
+        self.current_emails = self._group_by_thread(self._all_emails)
+
+        # Update tray icon badge (based on ungrouped count)
+        self.update_tray_icon(len(self._all_emails) > 0, self.is_snoozed())
 
         # Re-show the popup with updated emails (don't trigger another mail check)
         self.show_popup(check_mail=False)
@@ -1098,11 +1151,17 @@ class GmailNotifier:
         server_ids = {str(e.get("id")) for e in emails}
         self.notified_email_ids = self.notified_email_ids & server_ids
 
-        # Update current list of emails (single source of truth)
-        self.current_emails = emails
+        # Store ungrouped emails for internal tracking (notifications, etc.)
+        self._all_emails = emails
 
-        # Update tray icon badge
-        self.update_tray_icon(len(self.current_emails) > 0, self.is_snoozed())
+        # Group emails by thread for display (one entry per thread)
+        grouped_emails = self._group_by_thread(emails)
+
+        # Update current list of emails for display (grouped by thread)
+        self.current_emails = grouped_emails
+
+        # Update tray icon badge (based on ungrouped count - actual unread emails)
+        self.update_tray_icon(len(emails) > 0, self.is_snoozed())
 
         # Update popup if it's open
         if self.popup is not None and self.popup.isVisible():
