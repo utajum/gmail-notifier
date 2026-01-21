@@ -382,7 +382,7 @@ class GmailChecker(QObject):
             mail.login(username, password)
             mail.select("inbox")
 
-            # Search for unread emails from the last 24 hours
+            # Search for unread emails from the last 3 days
             # Use English month names for IMAP compatibility (locale-independent)
             months = [
                 "Jan",
@@ -398,10 +398,8 @@ class GmailChecker(QObject):
                 "Nov",
                 "Dec",
             ]
-            yesterday = datetime.now() - timedelta(days=1)
-            date_str = (
-                f"{yesterday.day:02d}-{months[yesterday.month - 1]}-{yesterday.year}"
-            )
+            three_days_ago = datetime.now() - timedelta(days=3)
+            date_str = f"{three_days_ago.day:02d}-{months[three_days_ago.month - 1]}-{three_days_ago.year}"
             status, messages = mail.search(None, f"(UNSEEN SINCE {date_str})")
 
             if status != "OK":
