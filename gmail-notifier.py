@@ -670,13 +670,18 @@ class EmailListPopup(QDialog):
 
     def _on_delete_clicked(self, email_id):
         """Handle delete button click with confirmation."""
-        reply = QMessageBox.question(
-            self,
-            "Delete Email",
-            "Are you sure you want to delete this email?",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No,
-        )
+        # Close the popup first, then show confirmation
+        self.hide()
+
+        # Create message box with mail icon
+        msg_box = QMessageBox()
+        msg_box.setWindowTitle("Delete Email")
+        msg_box.setWindowIcon(QIcon.fromTheme("mail-unread"))
+        msg_box.setText("Are you sure you want to delete this email?")
+        msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msg_box.setDefaultButton(QMessageBox.No)
+        reply = msg_box.exec_()
+
         if reply == QMessageBox.Yes:
             self.delete_requested.emit(str(email_id))
         else:
@@ -954,10 +959,12 @@ class GmailNotifier:
                 mail.login(username, password)
                 mail.select("inbox")
 
-                # Move the email to trash
-                # Gmail uses the \Trash flag or we can COPY to [Gmail]/Trash then delete
-                mail.store(email_id, "+X-GM-LABELS", "\\Trash")
-                mail.store(email_id, "+FLAGS", "\\Deleted")
+                # Convert email_id to bytes if it's a string
+                msg_id = email_id if isinstance(email_id, bytes) else email_id.encode()
+
+                # Move the email to trash by adding \Trash label and deleting
+                mail.store(msg_id, "+X-GM-LABELS", "\\Trash")
+                mail.store(msg_id, "+FLAGS", "\\Deleted")
                 mail.expunge()
 
                 mail.close()
