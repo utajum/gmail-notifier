@@ -130,7 +130,8 @@ def _draw_error_badge(painter, pixmap):
     painter.setBrush(QColor("#ff9800"))  # Material Orange
     painter.setPen(Qt.NoPen)
     dot_size = 24
-    painter.drawEllipse(pixmap.width() - dot_size - 2, 2, dot_size, dot_size)
+    # Position at bottom-right
+    painter.drawEllipse(pixmap.width() - dot_size - 2, pixmap.height() - dot_size - 2, dot_size, dot_size)
 
     # White exclamation mark
     painter.setPen(QColor("white"))
@@ -139,7 +140,7 @@ def _draw_error_badge(painter, pixmap):
     font.setBold(True)
     painter.setFont(font)
     painter.drawText(
-        QRect(pixmap.width() - dot_size - 2, 2, dot_size, dot_size),
+        QRect(pixmap.width() - dot_size - 2, pixmap.height() - dot_size - 2, dot_size, dot_size),
         Qt.AlignCenter,
         "!",
     )
@@ -157,21 +158,21 @@ def _draw_snooze_badge(painter, pixmap):
     font.setPixelSize(28)
     font.setBold(True)
     painter.setFont(font)
-    # Draw at top right
+    # Draw at bottom right
     painter.drawText(
-        pixmap.rect().adjusted(0, -5, -4, 0), Qt.AlignRight | Qt.AlignTop, "Z"
+        pixmap.rect().adjusted(0, 5, -4, 0), Qt.AlignRight | Qt.AlignBottom, "Z"
     )
 
 
 def _draw_unread_badge(painter, pixmap):
-    """Draw red dot for unread emails.
+    """Draw KDE blue dot for unread emails.
 
     Args:
         painter: Active QPainter on the pixmap.
         pixmap: The pixmap being painted on.
     """
     dot_size = 20  # Relative to 64x64
-    painter.setBrush(QColor("#f44336"))  # Material Red
+    painter.setBrush(QColor("#1D99F3"))  # KDE Blue
     painter.setPen(Qt.NoPen)
-    # Position it slightly offset from the edge
-    painter.drawEllipse(pixmap.width() - dot_size - 2, 2, dot_size, dot_size)
+    # Position at bottom-right
+    painter.drawEllipse(pixmap.width() - dot_size - 2, pixmap.height() - dot_size - 2, dot_size, dot_size)
