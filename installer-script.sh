@@ -322,6 +322,18 @@ install() {
         exit 1
     fi
     
+    # Copy the Gmail icon
+    if [ -f "assets/gmail.png" ]; then
+        cp assets/gmail.png "$CONFIG_DIR/gmail.png"
+        if [ $? -eq 0 ]; then
+            echo -e "  ${CHECK_MARK} Gmail icon copied to $CONFIG_DIR/gmail.png"
+        else
+            echo -e "  ${CROSS_MARK} Error copying the Gmail icon"
+        fi
+    else
+        echo -e "  ${YELLOW}Gmail icon not found in assets/, notifications will use fallback icon${NC}"
+    fi
+    
     # Create or update virtual environment
     echo -e "${BLUE}Setting up Python virtual environment...${NC}"
     
@@ -383,7 +395,7 @@ EOF
 Name=Gmail Notifier
 Comment=Gmail Notifier for KDE
 Exec=$SCRIPT_PATH
-Icon=internet-mail
+Icon=$CONFIG_DIR/gmail.png
 Terminal=false
 Type=Application
 Categories=Network;Email;
@@ -407,7 +419,7 @@ EOF
 Name=Gmail Notifier
 Comment=Gmail Notifier for KDE
 Exec=$SCRIPT_PATH
-Icon=internet-mail
+Icon=$CONFIG_DIR/gmail.png
 Terminal=false
 Type=Application
 Categories=Network;Email;

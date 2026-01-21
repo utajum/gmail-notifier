@@ -9,11 +9,16 @@ creating badge overlays for different states (unread, snoozed, error).
 import os
 
 from PyQt5.QtCore import Qt, QRect
-from PyQt5.QtGui import QIcon, QColor, QFont, QPainter
+from PyQt5.QtGui import QIcon, QColor, QFont, QPainter, QPixmap
+
+from gmail_notifier.config import ICON_PATH
+
+# Opacity for snoozed state (0.0 = invisible, 1.0 = fully visible)
+SNOOZE_OPACITY = 0.35
 
 
-# Common paths where Gmail icon might be installed
-GMAIL_ICON_PATHS = [
+# Fallback paths where Gmail icon might be installed on the system
+GMAIL_ICON_FALLBACK_PATHS = [
     "/usr/share/icons/hicolor/scalable/apps/gmail.svg",
     "/usr/share/icons/hicolor/48x48/apps/gmail.png",
     "/usr/share/icons/breeze/apps/48/gmail.svg",
@@ -22,33 +27,41 @@ GMAIL_ICON_PATHS = [
 
 
 def get_gmail_icon():
-    """Find Gmail icon from common system paths.
+    """Find Gmail icon, preferring local config dir icon.
 
-    Searches several common icon locations for a Gmail icon.
-    Falls back to the system 'mail-unread' theme icon if not found.
+    Search order:
+    1. Local icon in ~/.config/gmail-notifier/gmail.png (installed by installer)
+    2. System-installed Gmail icons
+    3. Fallback to system 'mail-unread' theme icon
 
     Returns:
         QIcon: Gmail icon or fallback mail-unread theme icon.
     """
-    for path in GMAIL_ICON_PATHS:
+    # First, check local config directory (installed by our installer)
+    if os.path.exists(ICON_PATH):
+        return QIcon(ICON_PATH)
+
+    # Then check system paths
+    for path in GMAIL_ICON_FALLBACK_PATHS:
         if os.path.exists(path):
             return QIcon(path)
 
-    # If the icon is not found, use a system icon
+    # If the icon is not found anywhere, use a system theme icon
     return QIcon.fromTheme("mail-unread")
 
 
 def create_badge_icon(base_icon, has_unread=False, is_snoozed=False, is_error=False):
     """Create icon with badge overlay.
 
-    Badge priority: error (!) > snoozed (Z) > unread (red dot)
+    Badge priority: error (!) > snoozed (faded + Z) > unread (red dot)
 
+    When snoozed, the icon is faded to indicate inactive state.
     If no badge state is active, returns the base icon unchanged.
 
     Args:
         base_icon: Base QIcon to add badge to.
         has_unread: Show red dot for unread emails.
-        is_snoozed: Show "Z" for snoozed state.
+        is_snoozed: Fade icon and show "Z" for snoozed state.
         is_error: Show "!" for error state.
 
     Returns:
@@ -64,6 +77,10 @@ def create_badge_icon(base_icon, has_unread=False, is_snoozed=False, is_error=Fa
     if pixmap.isNull():
         return base_icon
 
+    # For snoozed state, create a faded version of the icon
+    if is_snoozed:
+        pixmap = _create_faded_pixmap(pixmap, SNOOZE_OPACITY)
+
     painter = QPainter(pixmap)
     painter.setRenderHint(QPainter.Antialiasing)
 
@@ -77,6 +94,29 @@ def create_badge_icon(base_icon, has_unread=False, is_snoozed=False, is_error=Fa
     painter.end()
 
     return QIcon(pixmap)
+
+
+def _create_faded_pixmap(pixmap, opacity):
+    """Create a faded version of a pixmap.
+
+    Args:
+        pixmap: Original QPixmap.
+        opacity: Opacity value (0.0 = invisible, 1.0 = fully visible).
+
+    Returns:
+        QPixmap: Faded pixmap.
+    """
+    # Create a new transparent pixmap
+    faded = QPixmap(pixmap.size())
+    faded.fill(Qt.transparent)
+
+    # Draw the original pixmap with reduced opacity
+    painter = QPainter(faded)
+    painter.setOpacity(opacity)
+    painter.drawPixmap(0, 0, pixmap)
+    painter.end()
+
+    return faded
 
 
 def _draw_error_badge(painter, pixmap):

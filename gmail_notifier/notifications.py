@@ -7,15 +7,29 @@ notify-send with clickable actions, as well as higher-level functions
 for showing email notifications via both Qt tray and system notifications.
 """
 
+import os
 import subprocess
 import threading
 import webbrowser
 
 from PyQt5.QtWidgets import QSystemTrayIcon
 
+from gmail_notifier.config import ICON_PATH
+
+
+def _get_notification_icon():
+    """Get the icon path for system notifications.
+
+    Returns:
+        str: Path to local Gmail icon if it exists, otherwise 'mail-unread'.
+    """
+    if os.path.exists(ICON_PATH):
+        return ICON_PATH
+    return "mail-unread"
+
 
 def send_system_notification(
-    title, body, icon="mail-unread", snooze_callback=None, open_url=None
+    title, body, icon=None, snooze_callback=None, open_url=None
 ):
     """Send a system notification with optional click actions.
 
@@ -27,11 +41,14 @@ def send_system_notification(
     Args:
         title: Notification title text.
         body: Notification body text.
-        icon: Icon name or path (default: "mail-unread").
+        icon: Icon name or path. If None, uses the local Gmail icon.
         snooze_callback: Optional callback function for snooze action.
         open_url: Optional URL to open when "Open" is clicked.
                   Defaults to Gmail inbox if not provided.
     """
+    # Use local Gmail icon if no icon specified
+    if icon is None:
+        icon = _get_notification_icon()
 
     def run_notification():
         try:

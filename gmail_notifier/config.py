@@ -14,6 +14,7 @@ import keyring
 # Configuration paths
 CONFIG_DIR = os.path.expanduser("~/.config/gmail-notifier")
 SETTINGS_PATH = os.path.join(CONFIG_DIR, "settings.json")
+ICON_PATH = os.path.join(CONFIG_DIR, "gmail.png")
 
 # Ensure the configuration directory exists
 if not os.path.exists(CONFIG_DIR):
