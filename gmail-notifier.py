@@ -45,6 +45,7 @@ from PyQt5.QtCore import (
     QDir,
     Qt,
     QRect,
+    QSize,
 )
 from PyQt5.QtGui import QIcon, QCursor, QColor, QFont, QPainter, QPixmap
 
@@ -102,7 +103,9 @@ def save_settings(settings):
 
 
 # Send system notification using notify-send with click actions
-def send_system_notification(title, body, icon="mail-unread", snooze_callback=None):
+def send_system_notification(
+    title, body, icon="mail-unread", snooze_callback=None, open_url=None
+):
     def run_notification():
         try:
             # Use notify-send with actions for clickable notification
@@ -118,7 +121,7 @@ def send_system_notification(title, body, icon="mail-unread", snooze_callback=No
                 "-t",
                 "10000",
                 "-A",
-                "open=Open Gmail",
+                "open=Open Email" if open_url else "open=Open Gmail",
             ]
             # Add snooze action if callback provided
             if snooze_callback is not None:
@@ -135,7 +138,8 @@ def send_system_notification(title, body, icon="mail-unread", snooze_callback=No
             # Handle user action
             action = result.stdout.strip()
             if action == "open":
-                webbrowser.open("https://mail.google.com")
+                url = open_url if open_url else "https://mail.google.com"
+                webbrowser.open(url)
             elif action == "snooze" and snooze_callback is not None:
                 snooze_callback()
         except subprocess.TimeoutExpired:
@@ -633,15 +637,22 @@ class EmailListPopup(QDialog):
 
         # Create custom widget for the row
         row_widget = QWidget()
+        row_widget.setCursor(Qt.PointingHandCursor)
         row_layout = QHBoxLayout(row_widget)
-        row_layout.setContentsMargins(0, 4, 0, 4)
+        row_layout.setContentsMargins(10, 8, 8, 8)
         row_layout.setSpacing(8)
 
         # Email text label
-        text_label = QLabel(f"<b>{sender}</b><br>{subject}")
+        text_label = QLabel(
+            f"<b>{sender}</b><br><span style='color: #aaaaaa;'>{subject}</span>"
+        )
         text_label.setStyleSheet("color: #e0e0e0; background: transparent;")
         text_label.setWordWrap(True)
         text_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        text_label.setCursor(Qt.PointingHandCursor)
+        text_label.mousePressEvent = (
+            lambda event, l=link, eid=email_id: self._on_email_clicked(l, eid)
+        )
         row_layout.addWidget(text_label)
 
         # Delete button with trash icon
@@ -664,8 +675,8 @@ class EmailListPopup(QDialog):
         )
         row_layout.addWidget(delete_btn)
 
-        # Set the custom widget on the item
-        item.setSizeHint(row_widget.sizeHint())
+        # Set the custom widget on the item with fixed height
+        item.setSizeHint(QSize(340, 70))
         self.list_widget.setItemWidget(item, row_widget)
 
     def _on_delete_clicked(self, email_id):
@@ -688,11 +699,21 @@ class EmailListPopup(QDialog):
             # Re-show the popup when user clicks No
             self.reshow_requested.emit()
 
+    def _on_email_clicked(self, link, email_id):
+        """Handle click on email text to open it."""
+        if email_id:
+            self.email_clicked.emit(str(email_id))
+        if link:
+            webbrowser.open(link)
+        self.close()
+
     def _resize_to_content(self):
         """Resize popup based on content."""
         item_count = self.list_widget.count()
-        height = min(max(item_count * 65 + 20, 100), 500)
-        self.resize(350, height)
+        # First item (Open Gmail) is ~40px, email items are 70px each
+        height = 42 + (item_count - 1) * 72
+        height = min(max(height, 100), 550)
+        self.resize(380, height)
 
     def on_item_clicked(self, item):
         link = item.data(Qt.UserRole)
@@ -960,12 +981,16 @@ class GmailNotifier:
                 mail.select("inbox")
 
                 # Convert email_id to bytes if it's a string
-                msg_id = email_id if isinstance(email_id, bytes) else email_id.encode()
+                msg_id = (
+                    email_id if isinstance(email_id, bytes) else str(email_id).encode()
+                )
 
-                # Move the email to trash by adding \Trash label and deleting
-                mail.store(msg_id, "+X-GM-LABELS", "\\Trash")
-                mail.store(msg_id, "+FLAGS", "\\Deleted")
-                mail.expunge()
+                # For Gmail, copy to Trash folder then delete from inbox
+                # This is the proper way to delete in Gmail via IMAP
+                copy_result = mail.copy(msg_id, "[Gmail]/Trash")
+                if copy_result[0] == "OK":
+                    mail.store(msg_id, "+FLAGS", "\\Deleted")
+                    mail.expunge()
 
                 mail.close()
                 mail.logout()
@@ -1079,6 +1104,7 @@ class GmailNotifier:
         """Show notification for a single email."""
         title = f"New email from {email_item['sender']}"
         body = email_item["subject"]
+        link = email_item.get("link")
 
         # Tray icon notification
         self.tray_icon.showMessage(
@@ -1088,9 +1114,12 @@ class GmailNotifier:
             5000,  # Show for 5 seconds
         )
 
-        # System notification with snooze option
+        # System notification with snooze option and direct email link
         send_system_notification(
-            title, body, snooze_callback=self.snooze_from_notification
+            title,
+            body,
+            snooze_callback=self.snooze_from_notification,
+            open_url=link,
         )
 
     def _show_summary_notification(self, count):
