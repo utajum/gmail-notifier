@@ -105,6 +105,14 @@ uninstall() {
         echo -e "  ${CROSS_MARK} Main script not found"
     fi
     
+    # Remove package directory
+    if [ -d "$CONFIG_DIR/gmail_notifier" ]; then
+        rm -rf "$CONFIG_DIR/gmail_notifier"
+        echo -e "  ${CHECK_MARK} Package directory removed"
+    else
+        echo -e "  ${CROSS_MARK} Package directory not found"
+    fi
+    
     # Remove desktop file
     if [ -f "$DESKTOP_FILE" ]; then
         rm "$DESKTOP_FILE"
@@ -231,13 +239,30 @@ install() {
     mkdir -p "$SCRIPT_DIR"
     mkdir -p "$CONFIG_DIR"
     
-    # Copy the main script to the configuration directory
-    echo -e "${BLUE}Copying main script...${NC}"
+    # Copy the package directory to the configuration directory
+    echo -e "${BLUE}Copying application files...${NC}"
+    
+    # Copy the gmail_notifier package
+    if [ -d "gmail_notifier" ]; then
+        cp -r gmail_notifier "$CONFIG_DIR/"
+        if [ $? -eq 0 ]; then
+            echo -e "  ${CHECK_MARK} Package directory copied to $CONFIG_DIR/gmail_notifier"
+        else
+            echo -e "  ${CROSS_MARK} Error copying the package directory"
+            exit 1
+        fi
+    else
+        echo -e "  ${CROSS_MARK} Package directory 'gmail_notifier' not found"
+        echo -e "${RED}Make sure you are running this script from the gmail-notifier directory.${NC}"
+        exit 1
+    fi
+    
+    # Copy the main entry point script
     cp gmail-notifier.py "$CONFIG_DIR/gmail-notifier.py"
     if [ $? -eq 0 ]; then
-        echo -e "  ${CHECK_MARK} Main script copied to $CONFIG_DIR/gmail-notifier.py"
+        echo -e "  ${CHECK_MARK} Entry point script copied to $CONFIG_DIR/gmail-notifier.py"
     else
-        echo -e "  ${CROSS_MARK} Error copying the main script"
+        echo -e "  ${CROSS_MARK} Error copying the entry point script"
         echo -e "${RED}Make sure the gmail-notifier.py file exists in the current directory.${NC}"
         exit 1
     fi
@@ -269,7 +294,8 @@ install() {
     cat > "$SCRIPT_PATH" << EOF
 #!/bin/bash
 source "$VENV_DIR/bin/activate"
-python "$CONFIG_DIR/gmail-notifier.py"
+cd "$CONFIG_DIR"
+python -m gmail_notifier
 EOF
     
     chmod +x "$SCRIPT_PATH"
