@@ -1,7 +1,6 @@
 # Gmail Notifier for KDE
 
 <div align="center">
-  <img src="https://avatars.githubusercontent.com/u/83629496?v=4" alt="Gmail Notifier Logo" width="120px" style="border-radius: 10px;"/>
   <br><br>
   <p>
     <img src="https://img.shields.io/badge/KDE-1D99F3?style=for-the-badge&logo=kde&logoColor=white" alt="KDE"/>
@@ -10,6 +9,10 @@
     <img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Gmail"/>
     <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
   </p>
+</div>
+
+<div align="center">
+  <img src="screenshots/demo.gif" alt="Gmail Notifier Demo" width="800px"/>
 </div>
 
 ## 📋 Description
@@ -40,38 +43,20 @@
 <div align="center">
   <table>
     <tr>
-      <td align="center"><strong>Notification in the system tray</strong></td>
       <td align="center"><strong>Account configuration</strong></td>
-    </tr>
-    <tr>
-      <td><img src="screenshots/notification.png?other=true" alt="Notifications" width="400px"/></td>
-      <td><img src="screenshots/config.png?other=true" alt="Configuration" width="400px"/></td>
-    </tr>
-    <tr>
       <td align="center"><strong>Recent Emails Popup (Dark Theme)</strong></td>
-      <td align="center"><strong>System Tray Badge (Unread)</strong></td>
     </tr>
     <tr>
+      <td><img src="screenshots/config.png?other=true" alt="Configuration" width="400px"/></td>
       <td><img src="screenshots/unread-emails.png?other=true" alt="Unread Emails" width="400px"/></td>
-      <td><img src="screenshots/systray.png?other=true" alt="System Tray" width="400px"/></td>
     </tr>
     <tr>
-      <td align="center"><strong>Context Menu</strong></td>
-      <td align="center"><strong>Snooze Badge (Z)</strong></td>
-    </tr>
-    <tr>
-      <td><img src="screenshots/right-click.png?other=true" alt="Right Click" width="400px"/></td>
-      <td><img src="screenshots/snooze.png?other=true" alt="Snooze Badge" width="400px"/></td>
-    </tr>
-    <tr>
+
       <td align="center"><strong>Delete Email Confirmation</strong></td>
-      <td></td>
     </tr>
     <tr>
       <td><img src="screenshots/delete-email.png?other=true" alt="Delete Confirmation" width="400px"/></td>
-      <td></td>
     </tr>
-
   </table>
 </div>
 
