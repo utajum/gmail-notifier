@@ -100,6 +100,31 @@ def find_thread_email_ids(emails, email_id):
         return [str(email_id)]
 
 
+def augment_grouped_with_thread_ids(grouped_emails, all_emails):
+    """Augment grouped emails with complete list of email IDs in their threads.
+
+    This adds a 'thread_email_ids' field to each grouped email containing
+    all email IDs in that thread. This allows UI components to capture the
+    complete thread state at display time, avoiding race conditions from
+    background updates.
+
+    Args:
+        grouped_emails: List of grouped email dicts (output of group_by_thread).
+        all_emails: List of all ungrouped email dicts (source of truth).
+
+    Returns:
+        list: Grouped emails with 'thread_email_ids' field added.
+    """
+    augmented = []
+    for grouped_email in grouped_emails:
+        email_copy = grouped_email.copy()
+        # Get all email IDs in this thread
+        thread_email_ids = find_thread_email_ids(all_emails, grouped_email.get("id"))
+        email_copy["thread_email_ids"] = thread_email_ids
+        augmented.append(email_copy)
+    return augmented
+
+
 def remove_emails_by_ids(emails, email_ids_to_remove):
     """Remove emails with matching IDs from the list.
 

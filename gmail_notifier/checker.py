@@ -61,6 +61,7 @@ class GmailChecker(QObject):
             # Connect to Gmail with IMAP
             mail = imaplib.IMAP4_SSL("imap.gmail.com")
             mail.login(username, password)
+            # Use UID mode to get stable message identifiers
             mail.select("inbox")
 
             # Search for unread emails from the last 3 days
@@ -81,7 +82,8 @@ class GmailChecker(QObject):
             ]
             three_days_ago = datetime.now() - timedelta(days=3)
             date_str = f"{three_days_ago.day:02d}-{months[three_days_ago.month - 1]}-{three_days_ago.year}"
-            status, messages = mail.search(None, f"(UNSEEN SINCE {date_str})")
+            # Use UID SEARCH instead of regular SEARCH for stable IDs
+            status, messages = mail.uid("search", None, f"(UNSEEN SINCE {date_str})")
 
             if status != "OK":
                 mail.close()
@@ -94,9 +96,10 @@ class GmailChecker(QObject):
             message_ids = messages[0].split()
 
             # Check the last 200 unread emails at most
-            for msg_id in message_ids[-200:]:
-                status, msg_data = mail.fetch(
-                    msg_id, "(X-GM-THRID BODY.PEEK[HEADER.FIELDS (FROM SUBJECT DATE)])"
+            # Use UID FETCH to work with UIDs
+            for msg_uid in message_ids[-200:]:
+                status, msg_data = mail.uid(
+                    "fetch", msg_uid, "(X-GM-THRID BODY.PEEK[HEADER.FIELDS (FROM SUBJECT DATE)])"
                 )
 
                 if status != "OK":
@@ -145,7 +148,7 @@ class GmailChecker(QObject):
 
                 email_data.append(
                     {
-                        "id": msg_id.decode(),
+                        "id": msg_uid.decode(),  # Use UID instead of sequence number
                         "subject": subject,
                         "sender": sender,
                         "link": link,

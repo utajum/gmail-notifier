@@ -22,6 +22,7 @@ from gmail_notifier.email_utils import (
     group_by_thread,
     find_thread_email_ids,
     remove_emails_by_ids,
+    augment_grouped_with_thread_ids,
 )
 from gmail_notifier.email_actions import delete_emails_imap
 from gmail_notifier.notifications import (
@@ -243,16 +244,16 @@ class GmailNotifier:
         # This gives time for the user to read/archive the email
         QTimer.singleShot(20000, self.check_now)
 
-    def delete_email(self, email_id):
+    def delete_email(self, email_ids_str):
         """Delete all emails in a thread by moving to trash.
 
         Updates local state immediately, then runs IMAP delete in background.
 
         Args:
-            email_id: ID of an email in the thread to delete.
+            email_ids_str: Comma-separated string of email IDs to delete.
         """
-        # Find all email IDs in this thread
-        email_ids_to_delete = find_thread_email_ids(self._all_emails, email_id)
+        # Parse the comma-separated email IDs
+        email_ids_to_delete = [eid.strip() for eid in email_ids_str.split(",") if eid.strip()]
 
         # Update local state immediately
         self._remove_emails_from_state(email_ids_to_delete)
@@ -303,7 +304,11 @@ class GmailNotifier:
 
         # Create and configure popup
         gmail_url = self.settings.get("gmail_url", "https://mail.google.com")
-        self.popup = EmailListPopup(self.current_emails, gmail_url)
+        # Augment emails with thread_email_ids to capture state at popup creation time
+        emails_with_thread_ids = augment_grouped_with_thread_ids(
+            self.current_emails, self._all_emails
+        )
+        self.popup = EmailListPopup(emails_with_thread_ids, gmail_url)
         self.popup.email_clicked.connect(self.mark_email_read_locally)
         self.popup.delete_requested.connect(self.delete_email)
         self.popup.reshow_requested.connect(lambda: self.show_popup(check_mail=False))

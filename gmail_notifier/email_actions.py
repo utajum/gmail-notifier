@@ -16,14 +16,15 @@ def delete_emails_imap(username, password, email_ids):
     to avoid blocking the UI.
 
     For Gmail, the proper way to delete is:
-    1. Copy the message to [Gmail]/Trash
-    2. Mark the original as deleted
-    3. Expunge to remove from inbox
+    1. Use UID to identify messages (stable across mailbox changes)
+    2. Copy the message to [Gmail]/Trash using UID
+    3. Mark the original as deleted using UID
+    4. Expunge to remove from inbox
 
     Args:
         username: Gmail username/email address.
         password: Gmail app password.
-        email_ids: List of email ID strings to delete.
+        email_ids: List of email UID strings to delete.
 
     Raises:
         Exception: On IMAP connection or operation failure.
@@ -39,15 +40,15 @@ def delete_emails_imap(username, password, email_ids):
         mail.login(username, password)
         mail.select("inbox")
 
-        # Delete all emails in the list
+        # Delete all emails in the list using UID commands
         for eid in email_ids:
-            msg_id = eid.encode() if isinstance(eid, str) else eid
+            msg_uid = eid.encode() if isinstance(eid, str) else eid
 
-            # For Gmail, copy to Trash folder then delete from inbox
-            # This is the proper way to delete in Gmail via IMAP
-            copy_result = mail.copy(msg_id, "[Gmail]/Trash")
+            # Use UID commands to ensure we're targeting the correct email
+            # even if the mailbox changes in the background
+            copy_result = mail.uid("copy", msg_uid, "[Gmail]/Trash")
             if copy_result[0] == "OK":
-                mail.store(msg_id, "+FLAGS", "\\Deleted")
+                mail.uid("store", msg_uid, "+FLAGS", "\\Deleted")
 
         # Expunge all deleted emails at once
         mail.expunge()

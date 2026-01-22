@@ -193,13 +193,14 @@ class EmailListPopup(QDialog):
         """Add a single email row with text and delete button.
 
         Args:
-            email_data: Dict with keys: sender, subject, id, link, thread_count.
+            email_data: Dict with keys: sender, subject, id, link, thread_count, thread_email_ids.
         """
         sender = email_data.get("sender", "Unknown")
         subject = email_data.get("subject", "(No Subject)")
         email_id = email_data.get("id")
         link = email_data.get("link")
         thread_count = email_data.get("thread_count", 1)
+        thread_email_ids = email_data.get("thread_email_ids", [email_id])
 
         # Add thread count to subject if more than 1 email in thread
         if thread_count > 1:
@@ -251,8 +252,10 @@ class EmailListPopup(QDialog):
                 background-color: #ff5555;
             }
         """)
+        # Capture the complete list of email IDs at button creation time
+        # This prevents race conditions from background email updates
         delete_btn.clicked.connect(
-            lambda checked, eid=email_id: self._on_delete_clicked(eid)
+            lambda checked, ids=thread_email_ids: self._on_delete_clicked(ids)
         )
         row_layout.addWidget(delete_btn, 0, Qt.AlignTop)
 
@@ -263,11 +266,11 @@ class EmailListPopup(QDialog):
         webbrowser.open(self.gmail_url)
         self.close()
 
-    def _on_delete_clicked(self, email_id):
+    def _on_delete_clicked(self, thread_email_ids):
         """Handle delete button click with confirmation.
 
         Args:
-            email_id: ID of the email to delete.
+            thread_email_ids: List of email IDs in the thread to delete.
         """
         # Close the popup first, then show confirmation
         self.hide()
@@ -282,7 +285,8 @@ class EmailListPopup(QDialog):
         reply = msg_box.exec_()
 
         if reply == QMessageBox.Yes:
-            self.delete_requested.emit(str(email_id))
+            # Emit the complete list of email IDs as a comma-separated string
+            self.delete_requested.emit(",".join(str(eid) for eid in thread_email_ids))
         else:
             # Re-show the popup when user clicks No
             self.reshow_requested.emit()
