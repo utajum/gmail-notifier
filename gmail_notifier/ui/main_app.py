@@ -75,8 +75,8 @@ class GmailNotifier:
         self._all_emails = []
         self.current_emails = []
 
-        # Track notified email IDs to avoid duplicate notifications
-        self.notified_email_ids = set()
+        # Track notified thread IDs to avoid duplicate notifications
+        self.notified_thread_ids = set()
 
         # Snooze manager
         self.snooze_manager = SnoozeManager()
@@ -367,15 +367,18 @@ class GmailNotifier:
         # Update email state (dedup, store, group, update UI)
         self._update_email_state(emails)
 
-        # Clean up notified_email_ids: only keep IDs still on server
-        server_ids = {str(e.get("id")) for e in emails}
-        self.notified_email_ids = self.notified_email_ids & server_ids
+        # Clean up notified_thread_ids: only keep thread IDs still on server
+        server_thread_ids = {str(e.get("thread_id")) for e in emails if e.get("thread_id")}
+        self.notified_thread_ids = self.notified_thread_ids & server_thread_ids
 
         if not emails:
             return
 
-        # Filter out already notified emails
-        new_emails = [e for e in emails if e["id"] not in self.notified_email_ids]
+        # Filter out emails from already notified threads
+        new_emails = [
+            e for e in emails 
+            if e.get("thread_id") and str(e["thread_id"]) not in self.notified_thread_ids
+        ]
         if not new_emails:
             return
 
@@ -383,46 +386,57 @@ class GmailNotifier:
         if self.snooze_manager.is_snoozed():
             return
 
-        # Send notifications (with delay between each)
+        # Send notifications (grouped by thread, with delay between each)
         self._send_notifications(new_emails)
 
-        # Mark all new emails as notified
+        # Mark all threads as notified
         for email_item in new_emails:
-            self.notified_email_ids.add(email_item["id"])
+            if email_item.get("thread_id"):
+                self.notified_thread_ids.add(str(email_item["thread_id"]))
 
     def _send_notifications(self, new_emails):
-        """Send notifications for new emails.
+        """Send notifications for new emails, grouped by thread.
 
-        Shows individual notifications up to MAX_NOTIFICATIONS,
-        then a summary for any remaining.
+        Groups emails by thread first, then shows one notification per thread
+        up to MAX_NOTIFICATIONS, with a summary for any remaining threads.
 
         Args:
             new_emails: List of new email dicts to notify about.
         """
-        emails_to_notify = new_emails[: self.MAX_NOTIFICATIONS]
-        extra_count = len(new_emails) - self.MAX_NOTIFICATIONS
+        # Group by thread to send only one notification per thread
+        grouped_emails = group_by_thread(new_emails)
+        
+        threads_to_notify = grouped_emails[: self.MAX_NOTIFICATIONS]
+        extra_thread_count = len(grouped_emails) - self.MAX_NOTIFICATIONS
 
         # Send individual notifications with 300ms delay between each
-        for i, email_item in enumerate(emails_to_notify):
+        for i, thread_email in enumerate(threads_to_notify):
             delay = i * 300
+            thread_count = thread_email.get("thread_count", 1)
+            
+            # Update subject to show thread count if > 1
+            subject = thread_email["subject"]
+            if thread_count > 1:
+                subject = f"{subject} ({thread_count} unread)"
+            
             QTimer.singleShot(
                 delay,
-                lambda e=email_item: show_email_notification(
+                lambda e=thread_email, s=subject: show_email_notification(
                     self.tray_icon,
                     e["sender"],
-                    e["subject"],
+                    s,
                     e.get("link"),
                     self._snooze_from_notification,
                 ),
             )
 
-        # Show summary if there are more emails
-        if extra_count > 0:
-            delay = len(emails_to_notify) * 300
+        # Show summary if there are more threads
+        if extra_thread_count > 0:
+            delay = len(threads_to_notify) * 300
             QTimer.singleShot(
                 delay,
                 lambda: show_summary_notification(
-                    self.tray_icon, extra_count, self._snooze_from_notification
+                    self.tray_icon, extra_thread_count, self._snooze_from_notification
                 ),
             )
 
