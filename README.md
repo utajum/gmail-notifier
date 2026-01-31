@@ -216,6 +216,18 @@ gmail-notifier/
 └── screenshots/         # Screenshots for documentation
 ```
 
+## ☕ Support
+
+If this tool helps you stay on top of your emails, consider buying me a coffee!
+
+<div align="center">
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/utajum)
+
+</div>
+
+---
+
 ## 📄 License
 
 This project is under the Creative Commons Attribution 4.0 International (CC BY 4.0) license.
