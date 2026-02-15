@@ -1,0 +1,109 @@
+---
+import PostHog from "../components/posthog.astro";
+const siteUrl = 'https://gmail-notifier.elevatech.xyz';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={siteUrl} />
+
+    <title>Gmail Notifier for KDE | Lightweight Email Notifications for Linux</title>
+    <meta
+      name="description"
+      content="Lightweight, open-source system tray email notifier for KDE on Linux. Get desktop notifications for new Gmail and Google Workspace emails. Secure app password authentication, snooze, quick delete, and direct email linking."
+    />
+    <meta
+      name="keywords"
+      content="gmail notifier, kde, linux, email notifications, system tray, desktop notifications, gmail, google workspace, pyqt5, ubuntu, arch linux, email checker"
+    />
+
+    <!-- OpenGraph -->
+    <meta property="og:title" content="Gmail Notifier for KDE | Lightweight Email Notifications for Linux" />
+    <meta
+      property="og:description"
+      content="Lightweight, open-source system tray email notifier for KDE on Linux. Get desktop notifications for new Gmail and Google Workspace emails with secure authentication."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content={siteUrl} />
+    <meta property="og:site_name" content="Gmail Notifier for KDE" />
+    <meta property="og:image" content={`${siteUrl}/og-image.png`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Gmail Notifier for KDE — lightweight system tray email notifier showing desktop notifications for new emails" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Gmail Notifier for KDE | Lightweight Email Notifications for Linux" />
+    <meta
+      name="twitter:description"
+      content="Lightweight, open-source system tray email notifier for KDE on Linux. Get desktop notifications for new Gmail and Google Workspace emails with secure authentication."
+    />
+    <meta name="twitter:image" content={`${siteUrl}/og-image.png`} />
+    <meta name="twitter:image:alt" content="Gmail Notifier for KDE — lightweight system tray email notifier showing desktop notifications for new emails" />
+
+    <meta name="theme-color" content="#ffffff" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "http://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Gmail Notifier for KDE",
+      "operatingSystem": "Linux",
+      "applicationCategory": "UtilitiesApplication",
+      "description": "Lightweight, open-source system tray email notifier for KDE on Linux. Get desktop notifications for new Gmail and Google Workspace emails with secure app password authentication, snooze, quick delete, and direct email linking.",
+      "url": siteUrl,
+      "downloadUrl": "https://github.com/utajum/gmail-notifier/releases",
+      "softwareVersion": "1.0",
+      "image": `${siteUrl}/og-image.png`,
+      "screenshot": `${siteUrl}/screenshot.png`,
+      "author": {
+        "@type": "Person",
+        "name": "utajum",
+        "url": "https://github.com/utajum"
+      },
+      "license": "https://github.com/utajum/gmail-notifier/blob/master/LICENSE",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "sameAs": [
+        "https://github.com/utajum/gmail-notifier"
+      ]
+    })} />
+  </head>
+  <body>
+    <slot />
+    <PostHog />
+  </body>
+</html>
+
+<style is:global>
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    width: 100%;
+    min-height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    line-height: 1.6;
+    background: #ffffff;
+    color: #202124;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+</style>

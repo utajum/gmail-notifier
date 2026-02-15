@@ -1,0 +1,772 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1>Gmail Notifier <span class="highlight">for KDE</span></h1>
+          <p class="subtitle">Stay on top of your inbox without opening it. A lightweight system tray notifier that alerts you when new Gmail messages arrive.</p>
+          <div class="hero-buttons">
+            <a href="https://github.com/utajum/gmail-notifier" class="btn btn-primary" target="_blank" rel="noopener">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+              View on GitHub
+            </a>
+            <a href="https://buymeacoffee.com/utajum" class="btn btn-outline" target="_blank" rel="noopener">
+              <svg width="20" height="20" viewBox="0 0 884 1279" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M791 298c-1-4-2-7-4-10-3-5-7-8-12-11-4-2-8-3-13-3H121c-5 0-9 1-13 3-5 3-9 6-12 11-2 3-3 6-4 10l-1 5-77 620c-6 49 7 98 37 137s74 63 123 67h1l6 1h459c50 0 97-22 130-60 32-38 47-87 41-136l-77-627-1-5v-2zm-72 622c3 26-4 51-21 71s-42 31-68 31H253l-4-1c-25-2-49-14-64-35s-22-46-19-71l74-594h444l57 460 18 139z"/><path d="M670 395H213l-49 393c-4 33 5 66 26 92s52 43 83 47h1l3 1h327c34 0 65-15 87-41s33-58 27-91l-48-401zm-31 48l45 372c4 22-3 45-18 61s-36 28-59 28H280l-2-1c-21-2-40-13-54-31s-20-40-17-62l42-337h2l388-30z"/><path d="M286 225c-2-2-3-6-3-9 0-4 1-7 3-9l48-75c5-7 5-16 2-24s-11-14-19-16l-7-1c-6 0-12 2-16 6l-80 124c-3 4-4 8-4 12 0 5 2 9 5 13 3 3 7 5 12 6h13c6 0 12-2 16-6l26-17 4-4zm152 0c-2-2-3-6-3-9 0-4 1-7 3-9l48-75c5-7 5-16 2-24s-11-14-19-16l-7-1c-6 0-12 2-16 6l-80 124c-3 4-4 8-4 12 0 5 2 9 5 13 3 3 7 5 12 6h13c6 0 12-2 16-6l26-17 4-4zm152 0c-2-2-3-6-3-9 0-4 1-7 3-9l48-75c5-7 5-16 2-24s-11-14-19-16l-7-1c-6 0-12 2-16 6l-80 124c-3 4-4 8-4 12 0 5 2 9 5 13 3 3 7 5 12 6h13c6 0 12-2 16-6l26-17 4-4z"/></svg>
+              Buy me a coffee
+            </a>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <img src="/screenshot-unread.png" alt="Gmail Notifier email list popup showing recent unread messages" class="hero-screenshot" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Install -->
+  <section class="install-section">
+    <div class="container">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="terminal-dots">
+            <span class="tdot"></span>
+            <span class="tdot"></span>
+            <span class="tdot"></span>
+          </div>
+          <span class="terminal-label">Terminal</span>
+          <button class="copy-btn" id="copyBtn" aria-label="Copy to clipboard">
+            <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+        </div>
+        <div class="terminal-body">
+          <code><span class="prompt">$</span> git clone https://github.com/utajum/gmail-notifier.git<br/><span class="prompt">$</span> cd gmail-notifier && ./installer-script.sh</code>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What it does -->
+  <section class="section">
+    <div class="container">
+      <h2>What it does</h2>
+      <p class="section-desc">Gmail Notifier sits in your KDE system tray and checks for new messages on a schedule. When something arrives, you get a desktop notification. Click the tray icon to browse recent emails, open them in your browser, or delete them -- all without launching a full email client.</p>
+
+      <div class="showcase-grid">
+        <div class="showcase-item">
+          <img src="/screenshot-notification.png" alt="Desktop notification showing new email from John Doe" loading="lazy" />
+          <h3>Desktop notifications</h3>
+          <p>Dual system: tray popups and <code>notify-send</code> alerts with an action button to open Gmail directly.</p>
+        </div>
+        <div class="showcase-item">
+          <img src="/screenshot-unread.png" alt="Email list popup with unread messages and delete buttons" loading="lazy" />
+          <h3>Email list popup</h3>
+          <p>Single-click the tray icon to see your latest unread emails. Click to open, trash to delete.</p>
+        </div>
+        <div class="showcase-item">
+          <img src="/screenshot-config.png" alt="Configuration dialog for Gmail Notifier" loading="lazy" />
+          <h3>Simple setup</h3>
+          <p>Enter your email and app password, set the check interval, and you're done. Password stored in system keyring.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="section section-gray">
+    <div class="container">
+      <h2>Features</h2>
+      <div class="features-grid">
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <div>
+            <h3>Dual notifications</h3>
+            <p>Tray icon popups and system notifications via notify-send</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          </div>
+          <div>
+            <h3>Email list popup</h3>
+            <p>Browse recent unread messages with one click</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          </div>
+          <div>
+            <h3>Direct email linking</h3>
+            <p>Open specific email threads in your browser</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          </div>
+          <div>
+            <h3>Quick delete</h3>
+            <p>Move emails to trash directly from the popup</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><polyline points="4.22 10.22 5.64 11.64"/><polyline points="1 18 3 18"/><polyline points="21 18 23 18"/><polyline points="18.36 11.64 19.78 10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg>
+          </div>
+          <div>
+            <h3>Snooze</h3>
+            <p>Silence notifications for 1 hour with a visual "Z" badge</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div>
+            <h3>Secure storage</h3>
+            <p>App passwords stored in your system keyring</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <h3>Configurable intervals</h3>
+            <p>Set your preferred check frequency</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </div>
+          <div>
+            <h3>Status badges</h3>
+            <p>Red dot for unread, orange for errors, blue for snooze</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div>
+            <h3>Smart grouping</h3>
+            <p>Prevents duplicate alerts, groups new emails into summaries</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div>
+            <h3>Lightweight</h3>
+            <p>Minimal resources, runs quietly in the background</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+          <div>
+            <h3>Auto-start</h3>
+            <p>Launches with your KDE session via XDG autostart</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div>
+            <h3>Start menu entry</h3>
+            <p>Installs a .desktop launcher in your applications menu</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Compatibility -->
+  <section class="section">
+    <div class="container">
+      <h2>Works with</h2>
+      <div class="compat-row">
+        <div class="compat-pill">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          KDE Plasma 5.x+
+        </div>
+        <div class="compat-pill">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
+          Ubuntu / Debian
+        </div>
+        <div class="compat-pill">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 19h20L12 2z"/></svg>
+          Arch Linux
+        </div>
+        <div class="compat-pill">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Gmail &amp; Google Workspace
+        </div>
+        <div class="compat-pill">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 0-7 7c0 3 2 5 3 7h8c1-2 3-4 3-7a7 7 0 0 0-7-7z"/><path d="M9 22h6"/><path d="M9 18h6"/></svg>
+          Python 3.6+ / PyQt5
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section section-cta">
+    <div class="container cta-content">
+      <h2>Get started in under a minute</h2>
+      <p>Clone the repo, run the installer, enter your Gmail app password. That's it.</p>
+      <div class="hero-buttons">
+        <a href="https://github.com/utajum/gmail-notifier" class="btn btn-primary" target="_blank" rel="noopener">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          View on GitHub
+        </a>
+        <a href="https://buymeacoffee.com/utajum" class="btn btn-outline" target="_blank" rel="noopener">
+          <svg width="20" height="20" viewBox="0 0 884 1279" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M791 298c-1-4-2-7-4-10-3-5-7-8-12-11-4-2-8-3-13-3H121c-5 0-9 1-13 3-5 3-9 6-12 11-2 3-3 6-4 10l-1 5-77 620c-6 49 7 98 37 137s74 63 123 67h1l6 1h459c50 0 97-22 130-60 32-38 47-87 41-136l-77-627-1-5v-2zm-72 622c3 26-4 51-21 71s-42 31-68 31H253l-4-1c-25-2-49-14-64-35s-22-46-19-71l74-594h444l57 460 18 139z"/><path d="M670 395H213l-49 393c-4 33 5 66 26 92s52 43 83 47h1l3 1h327c34 0 65-15 87-41s33-58 27-91l-48-401zm-31 48l45 372c4 22-3 45-18 61s-36 28-59 28H280l-2-1c-21-2-40-13-54-31s-20-40-17-62l42-337h2l388-30z"/><path d="M286 225c-2-2-3-6-3-9 0-4 1-7 3-9l48-75c5-7 5-16 2-24s-11-14-19-16l-7-1c-6 0-12 2-16 6l-80 124c-3 4-4 8-4 12 0 5 2 9 5 13 3 3 7 5 12 6h13c6 0 12-2 16-6l26-17 4-4zm152 0c-2-2-3-6-3-9 0-4 1-7 3-9l48-75c5-7 5-16 2-24s-11-14-19-16l-7-1c-6 0-12 2-16 6l-80 124c-3 4-4 8-4 12 0 5 2 9 5 13 3 3 7 5 12 6h13c6 0 12-2 16-6l26-17 4-4zm152 0c-2-2-3-6-3-9 0-4 1-7 3-9l48-75c5-7 5-16 2-24s-11-14-19-16l-7-1c-6 0-12 2-16 6l-80 124c-3 4-4 8-4 12 0 5 2 9 5 13 3 3 7 5 12 6h13c6 0 12-2 16-6l26-17 4-4z"/></svg>
+          Buy me a coffee
+        </a>
+      </div>
+      <p class="cta-secondary">Found a bug? <a href="https://github.com/utajum/gmail-notifier/issues" target="_blank" rel="noopener">Open an issue</a></p>
+    </div>
+  </section>
+
+  <script>
+    document.getElementById('copyBtn')?.addEventListener('click', () => {
+      const cmd = 'git clone https://github.com/utajum/gmail-notifier.git && cd gmail-notifier && ./installer-script.sh';
+      navigator.clipboard.writeText(cmd).then(() => {
+        const copyIcon = document.querySelector('.copy-icon') as HTMLElement;
+        const checkIcon = document.querySelector('.check-icon') as HTMLElement;
+        if (copyIcon && checkIcon) {
+          copyIcon.style.display = 'none';
+          checkIcon.style.display = 'block';
+          setTimeout(() => {
+            copyIcon.style.display = 'block';
+            checkIcon.style.display = 'none';
+          }, 2000);
+        }
+      });
+    });
+  </script>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-links">
+        <a href="https://github.com/utajum/gmail-notifier" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/utajum/gmail-notifier/issues" target="_blank" rel="noopener">Issues</a>
+        <a href="https://github.com/utajum/gmail-notifier/discussions" target="_blank" rel="noopener">Discussions</a>
+        <a href="https://buymeacoffee.com/utajum" target="_blank" rel="noopener">Donate</a>
+      </div>
+      <p class="footer-credit">
+        Fork of <a href="https://github.com/panxos/gmail-notifier" target="_blank" rel="noopener">gmail-notifier</a> by P4NX0S. Built with <a href="https://www.riverbankcomputing.com/software/pyqt/" target="_blank" rel="noopener">PyQt5</a>.
+      </p>
+      <p class="footer-legal">
+        "Gmail" and "Google Workspace" are trademarks of Google LLC. Not affiliated with or endorsed by Google.
+      </p>
+    </div>
+  </footer>
+</Layout>
+
+<style>
+  /* ── Palette ── */
+  :root {
+    --red: #d93025;
+    --red-light: #ea4335;
+    --blue: #1a73e8;
+    --blue-light: #4285f4;
+    --gray-50: #f8f9fa;
+    --gray-100: #f1f3f4;
+    --gray-200: #e8eaed;
+    --gray-400: #bdc1c6;
+    --gray-600: #80868b;
+    --gray-700: #5f6368;
+    --gray-900: #202124;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  /* ── Layout ── */
+  .container {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .section {
+    padding: 5rem 0;
+  }
+
+  .section-gray {
+    background: var(--gray-50);
+  }
+
+  .section h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--gray-900);
+    margin: 0 0 0.75rem;
+    text-align: center;
+  }
+
+  .section-desc {
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto 3rem;
+    color: var(--gray-700);
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 5rem 0 3rem;
+    background: linear-gradient(165deg, #fce8e6 0%, #ffffff 40%, #e8f0fe 100%);
+  }
+
+  .hero-content {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+  }
+
+  .hero-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .hero-text h1 {
+    font-size: 2.75rem;
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--gray-900);
+    margin: 0 0 1rem;
+  }
+
+  .highlight {
+    color: var(--red);
+  }
+
+  .subtitle {
+    font-size: 1.15rem;
+    color: var(--gray-700);
+    line-height: 1.65;
+    margin: 0 0 2rem;
+  }
+
+  .hero-visual {
+    flex: 0 0 340px;
+  }
+
+  .hero-screenshot {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  /* ── Buttons ── */
+  .hero-buttons {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.5rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.15s ease;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--gray-900);
+    color: #fff;
+  }
+
+  .btn-primary:hover {
+    background: #333;
+  }
+
+  .btn-outline {
+    background: #fff;
+    color: var(--gray-900);
+    border: 1.5px solid var(--gray-200);
+  }
+
+  .btn-outline:hover {
+    border-color: var(--gray-400);
+    background: var(--gray-50);
+  }
+
+  /* ── Install Terminal ── */
+  .install-section {
+    padding: 0;
+    margin-top: -1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .terminal {
+    max-width: 660px;
+    margin: 0 auto;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--gray-900);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    padding: 0.65rem 1rem;
+    background: #2d2f31;
+  }
+
+  .terminal-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .tdot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #5f6368;
+  }
+
+  .terminal-label {
+    flex: 1;
+    text-align: center;
+    font-size: 0.75rem;
+    color: #9aa0a6;
+  }
+
+  .copy-btn {
+    background: none;
+    border: none;
+    color: #9aa0a6;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s;
+  }
+
+  .copy-btn:hover {
+    color: #e8eaed;
+  }
+
+  .terminal-body {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .terminal-body code {
+    font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', Consolas, monospace;
+    font-size: 0.85rem;
+    color: #e8eaed;
+    line-height: 1.8;
+  }
+
+  .prompt {
+    color: #34a853;
+    margin-right: 0.5rem;
+    user-select: none;
+  }
+
+  /* ── Showcase (screenshots) ── */
+  .showcase-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .showcase-item {
+    text-align: center;
+  }
+
+  .showcase-item img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.25rem;
+    border: 1px solid var(--gray-200);
+  }
+
+  .showcase-item h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 0 0 0.4rem;
+    color: var(--gray-900);
+  }
+
+  .showcase-item p {
+    font-size: 0.9rem;
+    color: var(--gray-700);
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  .showcase-item code {
+    font-size: 0.82rem;
+    background: var(--gray-100);
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+    color: var(--gray-900);
+  }
+
+  /* ── Features Grid ── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--gray-200);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 1.5rem;
+    background: #fff;
+  }
+
+  .feature-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: var(--gray-50);
+    color: var(--gray-700);
+  }
+
+  .feature-item h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem;
+    color: var(--gray-900);
+  }
+
+  .feature-item p {
+    font-size: 0.85rem;
+    color: var(--gray-600);
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  /* ── Compatibility ── */
+  .compat-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .compat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--gray-700);
+  }
+
+  .compat-pill svg {
+    color: var(--gray-600);
+  }
+
+  /* ── CTA ── */
+  .section-cta {
+    background: var(--gray-900);
+    color: #fff;
+    text-align: center;
+  }
+
+  .section-cta h2 {
+    color: #fff;
+    font-size: 1.75rem;
+  }
+
+  .section-cta p {
+    color: #bdc1c6;
+  }
+
+  .cta-content {
+    max-width: 560px;
+  }
+
+  .cta-content .hero-buttons {
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+
+  .section-cta .btn-primary {
+    background: var(--red);
+    color: #fff;
+  }
+
+  .section-cta .btn-primary:hover {
+    background: var(--red-light);
+  }
+
+  .section-cta .btn-outline {
+    background: transparent;
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+
+  .section-cta .btn-outline:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .cta-secondary {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .cta-secondary a {
+    color: var(--blue-light);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* ── Footer ── */
+  footer {
+    padding: 2.5rem 0;
+    text-align: center;
+    border-top: 1px solid var(--gray-200);
+  }
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .footer-links a {
+    color: var(--gray-700);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.15s;
+  }
+
+  .footer-links a:hover {
+    color: var(--gray-900);
+  }
+
+  .footer-credit {
+    font-size: 0.8rem;
+    color: var(--gray-600);
+    margin: 0 0 0.4rem;
+  }
+
+  .footer-credit a {
+    color: var(--gray-600);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .footer-legal {
+    font-size: 0.75rem;
+    color: var(--gray-400);
+    margin: 0;
+  }
+
+  /* ── Links ── */
+  a {
+    color: inherit;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 820px) {
+    .hero-content {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .hero-visual {
+      flex: none;
+      max-width: 320px;
+      width: 100%;
+    }
+
+    .hero-buttons {
+      justify-content: center;
+    }
+
+    .hero-text h1 {
+      font-size: 2.25rem;
+    }
+
+    .showcase-grid {
+      grid-template-columns: 1fr;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero {
+      padding: 3rem 0 2rem;
+    }
+
+    .section {
+      padding: 3.5rem 0;
+    }
+
+    .hero-text h1 {
+      font-size: 1.85rem;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+    }
+
+    .compat-row {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .footer-links {
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+  }
+</style>

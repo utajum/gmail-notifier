@@ -47,16 +47,16 @@
       <td align="center"><strong>Recent Emails Popup (Dark Theme)</strong></td>
     </tr>
     <tr>
-      <td><img src="screenshots/config.png?other=true" alt="Configuration" width="400px"/></td>
-      <td><img src="screenshots/unread-emails.png?other=true" alt="Unread Emails" width="400px"/></td>
+      <td><img src="screenshots/config.png" alt="Configuration" width="400px"/></td>
+      <td><img src="screenshots/unread-emails.png" alt="Unread Emails" width="400px"/></td>
     </tr>
     <tr>
       <td align="center"><strong>Delete Email Confirmation</strong></td>
       <td align="center"><strong>Notification</strong></td>
     </tr>
     <tr>
-      <td><img src="screenshots/delete-email.png?other=true" alt="Delete Confirmation" width="400px"/></td>
-      <td><img src="screenshots/notification.png?other=true" alt="Notification" width="400px"/></td>
+      <td><img src="screenshots/delete-email.png" alt="Delete Confirmation" width="400px"/></td>
+      <td><img src="screenshots/notification.png" alt="Notification" width="400px"/></td>
     </tr>
   </table>
 </div>
