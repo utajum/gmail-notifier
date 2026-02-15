@@ -51,11 +51,12 @@
       <td><img src="screenshots/unread-emails.png?other=true" alt="Unread Emails" width="400px"/></td>
     </tr>
     <tr>
-
       <td align="center"><strong>Delete Email Confirmation</strong></td>
+      <td align="center"><strong>Notification</strong></td>
     </tr>
     <tr>
       <td><img src="screenshots/delete-email.png?other=true" alt="Delete Confirmation" width="400px"/></td>
+      <td><img src="screenshots/notification.png?other=true" alt="Notification" width="400px"/></td>
     </tr>
   </table>
 </div>
@@ -241,10 +242,6 @@ This project is under the Creative Commons Attribution 4.0 International (CC BY 
 **Maintained and Enhanced by:**
 
 *   **utajum (utajum macedonia)** - [GitHub](https://github.com/utajum)
-
-**Original Author:**
-
-*   **P4NX0S** - [GitHub](https://github.com/panxos)
 
 ---
 
