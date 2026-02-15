@@ -9,6 +9,9 @@
     <img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Gmail"/>
     <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
   </p>
+  <p>
+    <a href="https://gmail-notifier.elevatech.xyz"><strong>gmail-notifier.elevatech.xyz</strong></a>
+  </p>
 </div>
 
 <div align="center">
