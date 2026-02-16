@@ -8,7 +8,7 @@ import Layout from '../layouts/Layout.astro';
     <div class="container">
       <div class="hero-content">
         <div class="hero-text">
-          <h1>Gmail Notifier <span class="highlight">for KDE</span></h1>
+          <h1>G<img src="/icon-192.png" alt="mail" class="hero-logo" />ail Notifier <span class="highlight">for KDE</span></h1>
           <p class="subtitle">Stay on top of your inbox without opening it. A lightweight system tray notifier that alerts you when new Gmail messages arrive.</p>
           <div class="hero-buttons">
             <a href="https://github.com/utajum/gmail-notifier" class="btn btn-primary" target="_blank" rel="noopener">
@@ -25,12 +25,7 @@ import Layout from '../layouts/Layout.astro';
           <img src="/screenshot-unread.png" alt="Gmail Notifier email list popup showing recent unread messages" class="hero-screenshot" />
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- Install -->
-  <section class="install-section">
-    <div class="container">
       <div class="terminal">
         <div class="terminal-bar">
           <div class="terminal-dots">
@@ -270,7 +265,7 @@ import Layout from '../layouts/Layout.astro';
         <a href="https://buymeacoffee.com/utajum" target="_blank" rel="noopener">Donate</a>
       </div>
       <p class="footer-credit">
-        Fork of <a href="https://github.com/panxos/gmail-notifier" target="_blank" rel="noopener">gmail-notifier</a> by P4NX0S. Built with <a href="https://www.riverbankcomputing.com/software/pyqt/" target="_blank" rel="noopener">PyQt5</a>.
+        Built with <a href="https://www.riverbankcomputing.com/software/pyqt/" target="_blank" rel="noopener">PyQt5</a>.
       </p>
       <p class="footer-legal">
         "Gmail" and "Google Workspace" are trademarks of Google LLC. Not affiliated with or endorsed by Google.
@@ -282,23 +277,24 @@ import Layout from '../layouts/Layout.astro';
 <style>
   /* ── Layout ── */
   .container {
-    max-width: 1040px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 1.5rem;
   }
 
   .section {
     padding: 5rem 0;
+    background: #2b2d30;
   }
 
   .section-gray {
-    background: var(--gray-50);
+    background: #232527;
   }
 
   .section h2 {
     font-size: 1.75rem;
     font-weight: 600;
-    color: var(--gray-900);
+    color: #ffffff;
     margin: 0 0 0.75rem;
     text-align: center;
   }
@@ -307,19 +303,15 @@ import Layout from '../layouts/Layout.astro';
     text-align: center;
     max-width: 640px;
     margin: 0 auto 3rem;
-    color: var(--gray-700);
+    color: #9aa0a6;
     font-size: 1.05rem;
     line-height: 1.7;
   }
 
-  .section-cta .section-desc {
-    color: var(--gray-400);
-  }
-
   /* ── Hero ── */
   .hero {
-    padding: 5rem 0 3rem;
-    background: linear-gradient(165deg, #fce8e6 0%, #ffffff 40%, #e8f0fe 100%);
+    padding: 5rem 0 4rem;
+    background: linear-gradient(165deg, #2a2d31 0%, #3f4449 20%, #6b7075 40%, #9a9fa5 60%, #c8cdd2 80%, #e8eaed 100%);
   }
 
   .hero-content {
@@ -334,20 +326,29 @@ import Layout from '../layouts/Layout.astro';
   }
 
   .hero-text h1 {
-    font-size: 2.75rem;
+    font-size: 4.75rem;
     font-weight: 700;
     line-height: 1.15;
-    color: var(--gray-900);
+    color: #ffffff;
     margin: 0 0 1rem;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .hero-logo {
+    display: inline-block;
+    height: 1.0em;
+    width: auto;
+    vertical-align: bottom;
+    margin: 0 -0.15em 0 -0.1em;
   }
 
   .highlight {
-    color: var(--red);
+    color: #ff6b6b;
   }
 
   .subtitle {
     font-size: 1.15rem;
-    color: var(--gray-700);
+    color: #e8eaed;
     line-height: 1.65;
     margin: 0 0 2rem;
   }
@@ -360,7 +361,8 @@ import Layout from '../layouts/Layout.astro';
     width: 100%;
     height: auto;
     border-radius: var(--radius);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   /* ── Buttons ── */
@@ -385,39 +387,31 @@ import Layout from '../layouts/Layout.astro';
   }
 
   .btn-primary {
-    background: var(--gray-900);
-    color: #fff;
+    background: #ffffff;
+    color: var(--gray-900);
   }
 
   .btn-primary:hover {
-    background: #333;
+    background: #f0f0f0;
   }
 
   .btn-outline {
-    background: #fff;
-    color: var(--gray-900);
-    border: 1.5px solid var(--gray-200);
+    background: transparent;
+    color: #ffffff;
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
   }
 
   .btn-outline:hover {
-    border-color: var(--gray-400);
-    background: var(--gray-50);
-  }
-
-  /* ── Install Terminal ── */
-  .install-section {
-    padding: 0 0 3rem;
-    margin-top: -1rem;
-    position: relative;
-    z-index: 1;
+    border-color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.1);
   }
 
   .terminal {
     max-width: 660px;
-    margin: 0 auto;
+    margin: 3.5rem auto 0;
     border-radius: var(--radius);
     overflow: hidden;
-    background: var(--gray-900);
+    background: #1e1f21;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   }
 
@@ -437,8 +431,11 @@ import Layout from '../layouts/Layout.astro';
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: #5f6368;
   }
+
+  .tdot:nth-child(1) { background: #ff5f57; }
+  .tdot:nth-child(2) { background: #febc2e; }
+  .tdot:nth-child(3) { background: #28c840; }
 
   .terminal-label {
     flex: 1;
@@ -465,6 +462,7 @@ import Layout from '../layouts/Layout.astro';
 
   .terminal-body {
     padding: 1.25rem 1.5rem;
+    background: #1a1a1a;
   }
 
   .terminal-body code {
@@ -526,43 +524,46 @@ import Layout from '../layouts/Layout.astro';
   .features-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: var(--gray-200);
-    border: 1px solid var(--gray-200);
-    border-radius: var(--radius);
-    overflow: hidden;
+    gap: 1rem;
   }
 
   .feature-item {
     display: flex;
     align-items: flex-start;
     gap: 0.85rem;
-    padding: 1.5rem;
-    background: #fff;
+    padding: 1.25rem;
+    background: #333538;
+    border-radius: var(--radius-sm);
+    border: 1px solid #3e4144;
+    transition: border-color 0.15s;
+  }
+
+  .feature-item:hover {
+    border-color: #555;
   }
 
   .feature-icon {
     flex-shrink: 0;
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
-    background: var(--gray-50);
-    color: var(--gray-700);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.07);
+    color: #bdc1c6;
   }
 
   .feature-item h3 {
     font-size: 0.95rem;
     font-weight: 600;
-    margin: 0 0 0.25rem;
-    color: var(--gray-900);
+    margin: 0 0 0.2rem;
+    color: #e8eaed;
   }
 
   .feature-item p {
-    font-size: 0.85rem;
-    color: var(--gray-600);
+    font-size: 0.84rem;
+    color: #9aa0a6;
     margin: 0;
     line-height: 1.45;
   }
@@ -582,15 +583,15 @@ import Layout from '../layouts/Layout.astro';
     gap: 0.5rem;
     padding: 0.6rem 1.2rem;
     border-radius: 50px;
-    background: var(--gray-50);
-    border: 1px solid var(--gray-200);
+    background: #333538;
+    border: 1px solid #3e4144;
     font-size: 0.9rem;
     font-weight: 500;
-    color: var(--gray-700);
+    color: #e8eaed;
   }
 
   .compat-pill svg {
-    color: var(--gray-600);
+    color: #9aa0a6;
   }
 
   /* ── CTA ── */
@@ -653,7 +654,8 @@ import Layout from '../layouts/Layout.astro';
   footer {
     padding: 2.5rem 0;
     text-align: center;
-    border-top: 1px solid var(--gray-200);
+    background: #ffffff;
+    border-top: 1px solid #e0e0e0;
   }
 
   .footer-links {
@@ -686,9 +688,13 @@ import Layout from '../layouts/Layout.astro';
     text-underline-offset: 2px;
   }
 
+  .footer-credit a:hover {
+    color: var(--gray-900);
+  }
+
   .footer-legal {
     font-size: 0.75rem;
-    color: var(--gray-400);
+    color: var(--gray-600);
     margin: 0;
   }
 
@@ -715,7 +721,7 @@ import Layout from '../layouts/Layout.astro';
     }
 
     .hero-text h1 {
-      font-size: 2.25rem;
+      font-size: 3.5rem;
     }
 
     .showcase-grid {
@@ -739,7 +745,7 @@ import Layout from '../layouts/Layout.astro';
     }
 
     .hero-text h1 {
-      font-size: 1.85rem;
+      font-size: 3rem;
     }
 
     .subtitle {
