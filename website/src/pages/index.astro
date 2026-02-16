@@ -52,7 +52,7 @@ import Layout from '../layouts/Layout.astro';
   </section>
 
   <!-- What it does -->
-  <section class="section">
+  <section class="section section-cta">
     <div class="container">
       <h2>What it does</h2>
       <p class="section-desc">Gmail Notifier sits in your KDE system tray and checks for new messages on a schedule. When something arrives, you get a desktop notification. Click the tray icon to browse recent emails, open them in your browser, or delete them -- all without launching a full email client.</p>
@@ -280,23 +280,6 @@ import Layout from '../layouts/Layout.astro';
 </Layout>
 
 <style>
-  /* ── Palette ── */
-  :root {
-    --red: #d93025;
-    --red-light: #ea4335;
-    --blue: #1a73e8;
-    --blue-light: #4285f4;
-    --gray-50: #f8f9fa;
-    --gray-100: #f1f3f4;
-    --gray-200: #e8eaed;
-    --gray-400: #bdc1c6;
-    --gray-600: #80868b;
-    --gray-700: #5f6368;
-    --gray-900: #202124;
-    --radius: 12px;
-    --radius-sm: 8px;
-  }
-
   /* ── Layout ── */
   .container {
     max-width: 1040px;
@@ -327,6 +310,10 @@ import Layout from '../layouts/Layout.astro';
     color: var(--gray-700);
     font-size: 1.05rem;
     line-height: 1.7;
+  }
+
+  .section-cta .section-desc {
+    color: var(--gray-400);
   }
 
   /* ── Hero ── */
@@ -419,7 +406,7 @@ import Layout from '../layouts/Layout.astro';
 
   /* ── Install Terminal ── */
   .install-section {
-    padding: 0;
+    padding: 0 0 3rem;
     margin-top: -1rem;
     position: relative;
     z-index: 1;
@@ -508,31 +495,31 @@ import Layout from '../layouts/Layout.astro';
     width: 100%;
     height: auto;
     border-radius: var(--radius);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     margin-bottom: 1.25rem;
-    border: 1px solid var(--gray-200);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .showcase-item h3 {
     font-size: 1.05rem;
     font-weight: 600;
     margin: 0 0 0.4rem;
-    color: var(--gray-900);
+    color: #fff;
   }
 
   .showcase-item p {
     font-size: 0.9rem;
-    color: var(--gray-700);
+    color: var(--gray-400);
     margin: 0;
     line-height: 1.55;
   }
 
   .showcase-item code {
     font-size: 0.82rem;
-    background: var(--gray-100);
+    background: rgba(255, 255, 255, 0.1);
     padding: 0.1rem 0.35rem;
     border-radius: 4px;
-    color: var(--gray-900);
+    color: #e8eaed;
   }
 
   /* ── Features Grid ── */
