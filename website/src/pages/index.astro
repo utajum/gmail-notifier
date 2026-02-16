@@ -8,7 +8,7 @@ import Layout from '../layouts/Layout.astro';
     <div class="container">
       <div class="hero-content">
         <div class="hero-text">
-          <h1>G<img src="/icon-192.png" alt="mail" class="hero-logo" />ail Notifier <span class="highlight">for KDE</span></h1>
+          <h1><span class="sr-only">Gmail</span><span aria-hidden="true">G<img src="/icon-192.png" alt="" class="hero-logo" />ail</span> Notifier <span class="highlight">for KDE</span></h1>
           <p class="subtitle">Stay on top of your inbox without opening it. A lightweight system tray notifier that alerts you when new Gmail messages arrive.</p>
           <div class="hero-buttons">
             <a href="https://github.com/utajum/gmail-notifier" class="btn btn-primary" target="_blank" rel="noopener">
@@ -760,6 +760,19 @@ import Layout from '../layouts/Layout.astro';
     font-size: 0.75rem;
     color: var(--gray-600);
     margin: 0;
+  }
+
+  /* ── Accessibility ── */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   /* ── Links ── */
