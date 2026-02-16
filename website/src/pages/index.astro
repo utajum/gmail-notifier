@@ -40,7 +40,7 @@ import Layout from '../layouts/Layout.astro';
           </button>
         </div>
         <div class="terminal-body">
-          <code><span class="prompt">$</span> git clone https://github.com/utajum/gmail-notifier.git<br/><span class="prompt">$</span> cd gmail-notifier && ./installer-script.sh</code>
+          <code id="terminalCode"></code><span class="cursor">_</span>
         </div>
       </div>
     </div>
@@ -253,6 +253,57 @@ import Layout from '../layouts/Layout.astro';
         }
       });
     });
+
+    // Hacker typing effect
+    const lines = [
+      { prompt: '$ ', text: 'git clone https://github.com/utajum/gmail-notifier.git' },
+      { prompt: '$ ', text: 'cd gmail-notifier && ./installer-script.sh' },
+    ];
+
+    const codeEl = document.getElementById('terminalCode');
+    const cursorEl = document.querySelector('.cursor') as HTMLElement;
+    let lineIdx = 0;
+    let charIdx = 0;
+    let currentHtml = '';
+
+    function typeChar() {
+      if (!codeEl) return;
+      const line = lines[lineIdx];
+
+      if (charIdx === 0) {
+        currentHtml += `<span class="prompt">${line.prompt}</span>`;
+        codeEl.innerHTML = currentHtml;
+      }
+
+      if (charIdx < line.text.length) {
+        currentHtml += line.text[charIdx];
+        codeEl.innerHTML = currentHtml;
+        charIdx++;
+        setTimeout(typeChar, 25 + Math.random() * 35);
+      } else {
+        lineIdx++;
+        charIdx = 0;
+        if (lineIdx < lines.length) {
+          currentHtml += '<br/>';
+          setTimeout(typeChar, 400);
+        } else {
+          // Done typing — keep cursor blinking
+          if (cursorEl) cursorEl.classList.add('blink');
+        }
+      }
+    }
+
+    // Start typing when terminal scrolls into view (or immediately if visible)
+    const terminal = document.querySelector('.terminal');
+    if (terminal) {
+      const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          observer.disconnect();
+          setTimeout(typeChar, 500);
+        }
+      }, { threshold: 0.5 });
+      observer.observe(terminal);
+    }
   </script>
 
   <!-- Footer -->
@@ -476,6 +527,19 @@ import Layout from '../layouts/Layout.astro';
     color: #34a853;
     margin-right: 0.5rem;
     user-select: none;
+  }
+
+  .cursor {
+    display: inline;
+    color: #34a853;
+    font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', Consolas, monospace;
+    font-size: 0.85rem;
+    animation: blink-fade 1s step-end infinite;
+  }
+
+  @keyframes blink-fade {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
   }
 
   /* ── Showcase (screenshots) ── */
