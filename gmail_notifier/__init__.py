@@ -10,15 +10,7 @@ This package provides a desktop notification system for Gmail that:
 - Securely stores credentials in the system keyring
 
 Usage:
-    # As a module
     python -m gmail_notifier
-
-    # Or import and call main()
-    from gmail_notifier import main
-    main()
 """
 
-from gmail_notifier.__main__ import main
-
 __version__ = "1.0.0"
-__all__ = ["main"]

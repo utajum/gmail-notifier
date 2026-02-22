@@ -19,6 +19,24 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from gmail_notifier.config import save_settings
 
 
+def _sanitize_imap_str(value):
+    """Strip control characters from a string for safe use in IMAP commands.
+
+    Python 3.12+ imaplib rejects commands containing control characters.
+    This removes characters with ordinal < 32 (except space) that can
+    leak in from keyring storage, encoded headers, etc.
+
+    Args:
+        value: String to sanitize.
+
+    Returns:
+        str: Sanitized string safe for IMAP commands.
+    """
+    if not value:
+        return value
+    return "".join(ch for ch in value if ord(ch) >= 32)
+
+
 class GmailChecker(QObject):
     """Worker class that checks Gmail for new emails in a background thread.
 
@@ -59,8 +77,10 @@ class GmailChecker(QObject):
 
         try:
             # Connect to Gmail with IMAP
+            # Sanitize credentials to strip control characters (Python 3.12+
+            # imaplib rejects them) that can leak from keyring storage.
             mail = imaplib.IMAP4_SSL("imap.gmail.com")
-            mail.login(username, password)
+            mail.login(_sanitize_imap_str(username), _sanitize_imap_str(password))
             # Use UID mode to get stable message identifiers
             mail.select("inbox")
 
@@ -92,14 +112,16 @@ class GmailChecker(QObject):
 
             email_data = []
 
-            # Get unread message IDs
-            message_ids = messages[0].split()
+            # Get unread message IDs (strip to remove any control chars)
+            message_ids = [uid.strip() for uid in messages[0].split()]
 
             # Check the last 200 unread emails at most
             # Use UID FETCH to work with UIDs
             for msg_uid in message_ids[-200:]:
                 status, msg_data = mail.uid(
-                    "fetch", msg_uid, "(X-GM-THRID BODY.PEEK[HEADER.FIELDS (FROM SUBJECT DATE)])"
+                    "fetch",
+                    msg_uid,
+                    "(X-GM-THRID BODY.PEEK[HEADER.FIELDS (FROM SUBJECT DATE)])",
                 )
 
                 if status != "OK":

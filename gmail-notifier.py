@@ -11,7 +11,7 @@ Usage:
     python -m gmail_notifier
 """
 
-from gmail_notifier import main
+from gmail_notifier.__main__ import main
 
 if __name__ == "__main__":
     main()

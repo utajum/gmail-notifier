@@ -37,12 +37,17 @@ def delete_emails_imap(username, password, email_ids):
 
     mail = imaplib.IMAP4_SSL("imap.gmail.com")
     try:
+        # Strip control characters that Python 3.12+ imaplib rejects
+        username = "".join(ch for ch in username if ord(ch) >= 32)
+        password = "".join(ch for ch in password if ord(ch) >= 32)
         mail.login(username, password)
         mail.select("inbox")
 
         # Delete all emails in the list using UID commands
         for eid in email_ids:
             msg_uid = eid.encode() if isinstance(eid, str) else eid
+            # Strip control characters that Python 3.12+ imaplib rejects
+            msg_uid = msg_uid.strip()
 
             # Use UID commands to ensure we're targeting the correct email
             # even if the mailbox changes in the background
